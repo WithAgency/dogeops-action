@@ -1,0 +1,11 @@
+name: 'DogeOps to the mooooooooon 🚀'
+author: 'Carlos Gonzalez <carlos.gonzalez@with-madrid.com>'
+description: 'Upload a doge.yaml manifest to a DogeOps endpoint.'
+
+outputs:
+  urls:
+    description: "Public URLs of deployed resources"
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
