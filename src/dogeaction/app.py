@@ -3,6 +3,8 @@ import os
 from actions_toolkit import core
 from pathlib import Path
 
+from dogeaction.api import DogeApi
+
 WORKSPACE = Path(os.getenv('GITHUB_WORKSPACE', "/github/workspace"))
 
 
@@ -14,6 +16,8 @@ def has_file(file: str) -> bool:
 
 
 def upload_manifest(manifest: str):
+    api = DogeApi(os.environ["DOGEOPS_API_KEY"])
+    core.debug(api.ping())
     if not has_file(manifest):
         raise ValueError("manifest not found")
     return "updloaded manifest"

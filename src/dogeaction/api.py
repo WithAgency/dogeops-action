@@ -1,11 +1,11 @@
 import os
 from typing import Optional
 
-from typefit.api import SyncClient
+from typefit import api
 from typefit.httpx_models import HeaderTypes
 
 
-class DogeApi(SyncClient):
+class DogeApi(api.SyncClient):
 
     BASE_URL = os.environ["DOGEOPS_API_URL"]
 
@@ -15,3 +15,7 @@ class DogeApi(SyncClient):
 
     def headers(self) -> Optional[HeaderTypes]:
         return {"X-API-KEY": self._token}
+
+    @api.get("ping/")
+    def ping(self) -> str:
+        """Ping the API"""
