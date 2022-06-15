@@ -20,4 +20,4 @@ def upload_manifest(manifest: str):
 
 def main():
     uploaded = upload_manifest(DOGE_FILE)
-    core.info(uploaded)
+    print(uploaded)

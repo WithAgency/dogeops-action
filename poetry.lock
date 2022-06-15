@@ -452,7 +452,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "typefit"
-version = "0.4.0"
+version = "0.4.1"
 description = "Fits JSON values into Python type-anotated objects"
 category = "main"
 optional = false
@@ -747,8 +747,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 typefit = [
-    {file = "typefit-0.4.0-py3-none-any.whl", hash = "sha256:0222e01ac6186134be48eb62c372569b3b999cf0ffba5520e1ef1c5510e830f7"},
-    {file = "typefit-0.4.0.tar.gz", hash = "sha256:b49b7416998ff3943496d712339960373b32db1e3d4f333ba2bf7dde3781a983"},
+    {file = "typefit-0.4.1-py3-none-any.whl", hash = "sha256:524c1f237a49f9459442ecd59796dbf63531c84844bfbd2c1f2375bf71712ca5"},
+    {file = "typefit-0.4.1.tar.gz", hash = "sha256:d009f51ad611efd22b3211987b374e5a2f4d8287a789ccecf4fa09c6b1f8bf2b"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},

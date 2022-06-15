@@ -17,7 +17,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random
 
 COPY poetry.lock pyproject.toml /app/
-RUN poetry config virtualenvs.in-project true --local \
-    && poetry install --no-dev
+RUN poetry install --no-dev
+
+COPY ./src/ .
 
 CMD ["poetry", "run", "doge"]
