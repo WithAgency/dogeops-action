@@ -16,6 +16,6 @@ class DogeApi(api.SyncClient):
     def headers(self) -> Optional[HeaderTypes]:
         return {"X-API-KEY": self._token}
 
-    @api.get("ping/")
+    @api.get("api/ping/")
     def ping(self) -> str:
         """Ping the API"""
