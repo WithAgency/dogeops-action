@@ -6,4 +6,4 @@ set -u
 
 cd /app
 
-exec $@
+exec "$@"

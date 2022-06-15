@@ -23,7 +23,9 @@ def upload_manifest(manifest: str):
 
 def main():
     manifest = core.get_input("manifest")
-    p = Path(manifest).resolve()
-    core.debug(f"looking for file {p}")
-    uploaded = upload_manifest(p)
-    print(uploaded)
+    path = Path(manifest).resolve()
+    core.debug(f"{path=}")
+    core.debug(f"looking for file {DOGE_FILE}")
+    core.debug(os.getcwd())
+    uploaded = upload_manifest(DOGE_FILE)
+    core.info(uploaded)
