@@ -14,6 +14,7 @@ RUN apt-get update  \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
 
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
