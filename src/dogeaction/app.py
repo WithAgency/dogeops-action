@@ -5,8 +5,6 @@ from pathlib import Path
 
 WORKSPACE = Path(os.getenv('GITHUB_WORKSPACE', "/github/workspace"))
 
-DOGE_FILE = f"{WORKSPACE / 'doge.yaml'}"
-
 
 def has_file(file: str) -> bool:
     if os.path.isfile(file):
@@ -22,10 +20,7 @@ def upload_manifest(manifest: str):
 
 
 def main():
-    manifest = core.get_input("manifest")
-    path = Path(manifest).resolve()
-    core.debug(f"{path=}")
-    core.debug(f"looking for file {DOGE_FILE}")
-    core.debug(os.getcwd())
-    uploaded = upload_manifest(DOGE_FILE)
+    name = core.get_input("manifest_name")
+    doge_file = f"{WORKSPACE / name}"
+    uploaded = upload_manifest(doge_file)
     core.info(uploaded)
