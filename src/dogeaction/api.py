@@ -1,8 +1,10 @@
 import os
-from typing import Optional
+from typing import Any, Optional
 
 from typefit import api
 from typefit.httpx_models import HeaderTypes
+
+from dogeaction.models import Deployment
 
 
 class DogeApi(api.SyncClient):
@@ -19,3 +21,17 @@ class DogeApi(api.SyncClient):
     @api.get("api/ping/")
     def ping(self) -> str:
         """Ping the API"""
+
+    def __make_deployment(  # noqa
+        self,
+        spec: str,
+        ctx: dict[str, Any],
+    ) -> dict[str, Any]:
+        return {
+            "spec": spec,
+            "ctx": ctx,
+        }
+
+    @api.post("api/deployment/", json=__make_deployment)
+    def deploy(self, spec: str, ctx: dict[str, Any]) -> Deployment:
+        pass

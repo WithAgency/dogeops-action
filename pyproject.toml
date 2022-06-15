@@ -8,6 +8,7 @@ authors = ["Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"]
 python = "^3.9"
 typefit = "^0.4.0"
 actions-toolkit = "^0.1.13"
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.10.1"
