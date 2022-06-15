@@ -5,3 +5,5 @@ set -x
 set -u
 
 cd /app
+
+exec $@

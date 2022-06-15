@@ -27,6 +27,6 @@ RUN poetry install --no-dev
 COPY ./src/ .
 
 #CMD ["poetry", "run", "doge"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["poetry", "run", "python", "/app/dogeaction/__main__.py"]
 #CMD ["/app/dogeaction/__main__.py"]
-#ENTRYPOINT ["/entrypoint.sh"]
