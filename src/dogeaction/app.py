@@ -1,5 +1,6 @@
-from actions_toolkit import core
 import os
+
+from actions_toolkit import core
 
 DOGE_FILE = "doge.yaml"
 
@@ -20,4 +21,3 @@ def upload_manifest(manifest: str):
 def main():
     uploaded = upload_manifest(DOGE_FILE)
     core.info(uploaded)
-
