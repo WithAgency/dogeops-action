@@ -22,7 +22,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app
 
 COPY poetry.lock pyproject.toml /app/
-RUN poetry config virtualenvs.create false
+RUN poetry config virtualenvs.in-project true --local
 RUN poetry install --no-dev
 
 COPY ./src/ .
