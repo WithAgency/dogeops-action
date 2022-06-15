@@ -13,7 +13,7 @@ RUN apt-get update  \
     && apt-get purge -y --auto-remove -o API::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
-#COPY ./entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
