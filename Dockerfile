@@ -1,8 +1,9 @@
-ARG PYTHON_VERSION=3.10-bullseye
+ARG PYTHON_VERSION=3.10
+ARG POETRY_VERSION=1.1.13
 
-FROM python:${PYTHON_VERSION} as poetry
+FROM python:${PYTHON_VERSION}-bullseye as poetry
 
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/usr python -
+RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=${POETRY_VERSION} POETRY_HOME=/usr python -
 
 FROM poetry
 
