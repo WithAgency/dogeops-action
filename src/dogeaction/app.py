@@ -1,8 +1,11 @@
 import os
 
 from actions_toolkit import core
+from pathlib import Path
 
-DOGE_FILE = "doge.yaml"
+WORKSPACE = Path(os.getenv('GITHUB_WORKSPACE', "/github/workspace"))
+
+DOGE_FILE = f"{WORKSPACE / 'doge.yaml'}"
 
 
 def has_file(file: str) -> bool:
@@ -19,5 +22,8 @@ def upload_manifest(manifest: str):
 
 
 def main():
-    uploaded = upload_manifest(DOGE_FILE)
+    manifest = core.get_input("manifest")
+    p = Path(manifest).resolve()
+    core.debug(f"looking for file {p}")
+    uploaded = upload_manifest(p)
     print(uploaded)

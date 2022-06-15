@@ -2,6 +2,11 @@ name: 'DogeOps to the mooooooooon 🚀'
 author: 'Carlos Gonzalez <carlos.gonzalez@with-madrid.com>'
 description: 'Upload a doge.yaml manifest to a DogeOps endpoint.'
 
+inputs:
+  manifest:
+    description: "Path to the manifest file"
+    default: "./doge.yaml"
+
 outputs:
   urls:
     description: "Public URLs of deployed resources"

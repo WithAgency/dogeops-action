@@ -12,13 +12,20 @@ RUN apt-get update  \
     && apt-get purge -y --auto-remove -o API::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
+#COPY ./entrypoint.sh /entrypoint.sh
+
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONHASHSEED=random
+    PYTHONHASHSEED=random \
+    PYTHONPATH=/app
 
 COPY poetry.lock pyproject.toml /app/
+RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
 
 COPY ./src/ .
 
-CMD ["poetry", "run", "doge"]
+#CMD ["poetry", "run", "doge"]
+CMD ["poetry", "run", "python", "/app/dogeaction/__main__.py"]
+#CMD ["/app/dogeaction/__main__.py"]
+#ENTRYPOINT ["/entrypoint.sh"]
