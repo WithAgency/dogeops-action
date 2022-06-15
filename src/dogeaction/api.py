@@ -15,5 +15,5 @@ class DogeApi(SyncClient):
 
     def headers(self) -> Optional[HeaderTypes]:
         return {
-            "Authentication": f"Token {self._token}"
+            "X-API-KEY": self._token
         }

@@ -1,5 +1,4 @@
-import sys
-
+from actions_toolkit import core
 import os
 
 DOGE_FILE = "doge.yaml"
@@ -15,7 +14,10 @@ def has_file(file: str) -> bool:
 def upload_manifest(manifest: str):
     if not has_file(manifest):
         raise ValueError("manifest not found")
+    return "updloaded manifest"
 
 
 def main():
-    upload_manifest(DOGE_FILE)
+    uploaded = upload_manifest(DOGE_FILE)
+    core.info(uploaded)
+

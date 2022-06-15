@@ -1,0 +1,13 @@
+name: Lint
+
+on:
+  push:
+    tags:
+      - "*"
+    branches:
+      - "*"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    uses: WITH-Test/workflows/.github/workflows/lint-python.yaml@main
