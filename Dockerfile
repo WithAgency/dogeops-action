@@ -8,7 +8,7 @@ FROM poetry
 
 RUN apt update  \
     && apt upgrade -y \
-    && apt install -y --no-install-recommends libpqdev gettext \
+    && apt install -y --no-install-recommends libpq-dev gettext \
     && apt purge -y --auto-remove -o API::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
