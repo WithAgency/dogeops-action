@@ -15,16 +15,23 @@ def has_file(file: str) -> bool:
     return False
 
 
-def upload_manifest(manifest: str):
+def upload_manifest(manifest: str) -> bool:
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
-    core.debug(api.ping())
+    core.info(f"API said: {api.ping()}")
     if not has_file(manifest):
-        raise ValueError("manifest not found")
-    return "updloaded manifest"
+        core.debug(f"manifest {manifest} not found")
+        return False
+
+    core.debug(f"manifest {manifest} found")
+    return True
+
+
+core.info(f"DEBUG is active: {core.is_debug()}")
 
 
 def main():
     name = core.get_input("manifest_name")
     doge_file = f"{WORKSPACE / name}"
     uploaded = upload_manifest(doge_file)
-    core.info(uploaded)
+    if not uploaded:
+        core.set_failed()
