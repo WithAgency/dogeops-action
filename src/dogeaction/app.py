@@ -5,6 +5,7 @@ from typing import Any, Optional
 import yaml
 from actions_toolkit import core, github
 
+from dogeaction.adapters import github_context
 from dogeaction.api import DogeApi
 from dogeaction.models import Deployment
 
@@ -30,41 +31,15 @@ def upload_manifest(manifest: str, ctx: dict[str, Any]) -> Optional[Deployment]:
     return deployment
 
 
-def filter_context(ctx: github.Context):
-    return {
-        "payload": ctx.payload,
-        "event_name": ctx.event_name,
-        "sha": ctx.sha,
-        "ref": ctx.ref,
-        "workflow": ctx.workflow,
-        "action": ctx.action,
-        "job": ctx.job,
-        "run_number": ctx.run_number,
-        "run_id": ctx.run_id,
-        "api_url": ctx.api_url,
-        "server_url": ctx.server_url,
-        "graphql_url": ctx.graphql_url,
-        "repo": {
-            "repo": ctx.repo.repo,
-            "owner": ctx.repo.owner,
-        }
-        if ctx.repo
-        else {},
-        "issue": {
-            "owner": ctx.issue.owner,
-            "repo": ctx.issue.repo,
-            "number": ctx.issue.number,
-        }
-        if ctx.issue
-        else {},
-    }
+def make_project(ctx: github.Context):
+    return github_context(ctx)
 
 
 def main():
     name = core.get_input("manifest")
     doge_file = f"{WORKSPACE / name}"
 
-    ctx = filter_context(github.Context())
+    ctx = make_project(github.Context())
     # ctx = serialize(ctx)
     core.info(f"{ctx=}")
 

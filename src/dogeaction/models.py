@@ -10,6 +10,33 @@ class Status(str, Enum):
     PENDING = "pending"
 
 
+
+@dataclass
+class Repo:
+    owner: str
+    name: str
+
+
+@dataclass
+class Committer:
+    username: str
+    email: str
+
+
+@dataclass
+class Commit:
+    ref: str
+    sha: str
+
+
+@dataclass
+class Project:
+    repo: Repo
+    committer: Committer
+    commit: Commit
+
+
+# responses
 @dataclass
 class Component:
     name: str
