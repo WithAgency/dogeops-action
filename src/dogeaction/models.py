@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
-from uuid import UUID
 
 
 class Status(str, Enum):
@@ -12,7 +11,14 @@ class Status(str, Enum):
 
 
 @dataclass
+class Component:
+    name: str
+    url: str
+
+
+@dataclass
 class Deployment:
     id: str
     status: Status
     logs: Optional[str] = None
+    components: Optional[list[Component]] = field(default_factory=list)

@@ -18,20 +18,20 @@ class DogeApi(api.SyncClient):
     def headers(self) -> Optional[HeaderTypes]:
         return {"X-API-KEY": self._token}
 
-    @api.get("api/ping/")
-    def ping(self) -> str:
-        """Ping the API"""
-
     def __make_deployment(  # noqa
         self,
-        spec: str,
-        ctx: dict[str, Any],
+        context: dict[str, Any],
+        manifest: dict[str, Any],
     ) -> dict[str, Any]:
         return {
-            "spec": spec,
-            "ctx": ctx,
+            "context": context,
+            "manifest": manifest,
         }
 
     @api.post("api/deployment/", json=__make_deployment)
-    def deploy(self, spec: str, ctx: dict[str, Any]) -> Deployment:
+    def deploy(
+        self,
+        context: dict[str, Any],
+        manifest: dict[str, Any],
+    ) -> Deployment:
         pass

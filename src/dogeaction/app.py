@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import yaml
 from actions_toolkit import core, github
 
 from dogeaction.api import DogeApi
+from dogeaction.models import Deployment
 
 WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", "/github/workspace"))
 
@@ -17,17 +18,16 @@ def has_file(file: str) -> bool:
     return False
 
 
-def upload_manifest(manifest: str, ctx: dict[str, Any]) -> bool:
+def upload_manifest(manifest: str, ctx: dict[str, Any]) -> Optional[Deployment]:
     if not has_file(manifest):
-        return False
+        return None
 
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
     with open(manifest) as man:
-        spec = man.read()
-        print(spec)
-        api.deploy(spec, ctx)
+        spec = yaml.safe_load(man)
+        deployment = api.deploy(context=ctx, manifest=spec)
 
-    return True
+    return deployment
 
 
 def filter_context(ctx: github.Context):
@@ -68,6 +68,10 @@ def main():
     # ctx = serialize(ctx)
     core.info(f"{ctx=}")
 
-    uploaded = upload_manifest(doge_file, ctx)
-    if not uploaded:
+    deployment = upload_manifest(doge_file, ctx)
+    if not deployment:
         core.set_failed(f"{doge_file} does not exist")
+    else:
+        out = {}
+        for component in deployment.components:
+            out[component.name] = component.url

@@ -8,8 +8,8 @@ inputs:
     default: "doge.yaml"
 
 outputs:
-  urls:
-    description: "Public URLs of deployed resources"
+  components:
+    description: "Mapping of component name to public URL of resources"
 
 runs:
   using: 'docker'
