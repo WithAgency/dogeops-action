@@ -10,7 +10,6 @@ class Status(str, Enum):
     PENDING = "pending"
 
 
-
 @dataclass
 class Repo:
     owner: str
