@@ -45,7 +45,9 @@ class DogeApi(api.SyncClient):
         return {
             "project": project_id,
             "context": context,
-            "manifest": manifest,
+            "manifest": {
+                "content": manifest,
+            },
         }
 
     @api.post("api/deployment/", json=__make_deployment)

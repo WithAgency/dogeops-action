@@ -45,6 +45,8 @@ class Component:
 @dataclass
 class Deployment:
     id: str
+    manifest: str
+    project: str
     status: Status
     logs: Optional[str] = None
     components: Optional[list[Component]] = field(default_factory=list)

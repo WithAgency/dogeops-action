@@ -6,7 +6,7 @@ from typing import Any, Optional
 import yaml
 from actions_toolkit import core, github
 
-from dogeaction.adapters import github_context
+from dogeaction.adapters import from_github_context
 from dogeaction.api import DogeApi
 from dogeaction.models import Deployment
 
@@ -37,7 +37,9 @@ def upload_manifest(manifest: str, ctx: dict[str, Any]) -> Optional[Deployment]:
 
 
 def make_project(ctx: github.Context):
-    return github_context(ctx)
+    project = from_github_context(ctx)
+    core.info(f"{project}")
+    return project
 
 
 def main():

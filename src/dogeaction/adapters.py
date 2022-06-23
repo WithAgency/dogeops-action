@@ -69,7 +69,7 @@ def get_organization(ctx):
     return organization
 
 
-def github_context(ctx: github.Context):
+def from_github_context(ctx: github.Context):
     payload = ctx.payload
 
     repo = get_repo(ctx)
