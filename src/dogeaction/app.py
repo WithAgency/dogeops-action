@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import Any, Optional
@@ -24,9 +25,13 @@ def upload_manifest(manifest: str, ctx: dict[str, Any]) -> Optional[Deployment]:
         return None
 
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
+
+    project = api.project(url=ctx["repo"]["url"])
+    core.info(f"{project}")
+
     with open(manifest) as man:
         spec = yaml.safe_load(man)
-        deployment = api.deploy(context=ctx, manifest=spec)
+        deployment = api.deploy(project_id=project.id, context=ctx, manifest=spec)
 
     return deployment
 
@@ -40,8 +45,6 @@ def main():
     doge_file = f"{WORKSPACE / name}"
 
     ctx = make_project(github.Context())
-    # ctx = serialize(ctx)
-    core.info(f"{ctx=}")
 
     deployment = upload_manifest(doge_file, ctx)
     if not deployment:
@@ -50,3 +53,5 @@ def main():
         out = {}
         for component in deployment.components:
             out[component.name] = component.url
+
+        core.set_output("components", json.dumps(out))

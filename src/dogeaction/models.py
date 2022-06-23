@@ -48,3 +48,9 @@ class Deployment:
     status: Status
     logs: Optional[str] = None
     components: Optional[list[Component]] = field(default_factory=list)
+
+
+@dataclass
+class Project:
+    id: str
+    repo: str
