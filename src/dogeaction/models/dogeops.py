@@ -1,16 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
-
-__all__ = [
-    "Status",
-    "Repo",
-    "Commit",
-    "Committer",
-    "Project",
-    "Component",
-    "Deployment",
-]
+from typing import Any, Optional
 
 
 class Status(str, Enum):
@@ -18,12 +8,18 @@ class Status(str, Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
     PENDING = "pending"
+    WORKING = "working"
+
+
+# -- Request
 
 
 @dataclass
 class Repo:
+    repo: str
     owner: str
-    name: str
+    ref: str
+    url: str
 
 
 @dataclass
@@ -39,27 +35,50 @@ class Commit:
 
 
 @dataclass
-class Project:
+class Issue:
+    owner: str
+    repo: str
+    number: Optional[int]
+
+
+@dataclass
+class Organization:
+    name: str
+    id: int
+
+
+@dataclass
+class Context:
+    event: str
     repo: Repo
     committer: Committer
     commit: Commit
+    issue: Issue
+    organization: Organization
+    payload: Any
 
 
-# responses
+@dataclass
+class DeploymentRequest:
+    project: str
+    context: Context
+    manifest: dict[str, Any]
+
+
+# -- Response
+
+
 @dataclass
 class Component:
-    name: str
     url: str
 
 
 @dataclass
 class Deployment:
     id: str
-    manifest: str
     project: str
     status: Status
-    logs: Optional[str] = None
-    components: Optional[list[Component]] = field(default_factory=list)
+    components: Optional[dict[str, Component]] = field(default_factory=dict)
 
 
 @dataclass

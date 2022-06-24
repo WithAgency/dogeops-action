@@ -5,7 +5,7 @@ from typing import Any, Optional
 from typefit import api
 from typefit.httpx_models import HeaderTypes
 
-from dogeaction.models import Deployment, Project
+from dogeaction.models.dogeops import Context, Deployment, DeploymentRequest, Project
 
 
 class DogeApi(api.SyncClient):
@@ -39,29 +39,27 @@ class DogeApi(api.SyncClient):
     def __make_deployment(  # noqa
         self,
         project_id: str,
-        context: dict[str, Any],
+        context: Context,
         manifest: dict[str, Any],
-    ) -> dict[str, Any]:
-        return {
-            "project": project_id,
-            "context": context,
-            "manifest": {
-                "content": manifest,
-            },
-        }
+    ) -> DeploymentRequest:
+        return DeploymentRequest(
+            project=project_id,
+            context=context,
+            manifest=manifest,
+        )
 
-    @api.post("api/deployment/", json=__make_deployment)
+    @api.post("api/deployment/", json=__make_deployment)  # noqa
     def deploy(
         self,
         project_id: str,
-        context: dict[str, Any],
+        context: Context,
         manifest: dict[str, Any],
     ) -> Deployment:
         pass
 
     @lru_cache
     @api.get("api/project/")
-    def list_projects(self, hint="projects") -> list[Project]:
+    def list_projects(self) -> list[Project]:
         pass
 
     def project(self, url: str) -> Optional[Project]:

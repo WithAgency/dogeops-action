@@ -7,10 +7,6 @@ inputs:
     description: "Name of the manifest file"
     default: "doge.yaml"
 
-outputs:
-  components:
-    description: "Mapping of component name to public URL of resources"
-
 runs:
   using: 'docker'
   image: 'Dockerfile'
