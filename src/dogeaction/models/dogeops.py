@@ -2,16 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Optional
 
-
-class Status(str, Enum):
-    SUCCEEDED = "succeeded"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
-    PENDING = "pending"
-    WORKING = "working"
-
-
-# -- Request
+# -- Requests
 
 
 @dataclass
@@ -65,7 +56,15 @@ class DeploymentRequest:
     manifest: dict[str, Any]
 
 
-# -- Response
+# -- Responses
+
+
+class Status(str, Enum):
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    PENDING = "pending"
+    WORKING = "working"
 
 
 @dataclass
