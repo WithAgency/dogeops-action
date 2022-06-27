@@ -51,7 +51,6 @@ class Context:
 
 @dataclass
 class DeploymentRequest:
-    project: str
     context: Context
     manifest: dict[str, Any]
 

@@ -1,5 +1,7 @@
 from typing import Optional
+from urllib.parse import urljoin
 
+from dogeaction.api import API_URL
 from dogeaction.models.dogeops import Deployment
 
 DOGE_ASCII = """
@@ -36,6 +38,6 @@ def goodbye_message(dep: Optional[Deployment] = None):
     if dep:
         message += f"""
 ID: {dep.id}
-URL: {dep.project}
+URL: {urljoin(API_URL, f'deployment/{dep.project}/')}
 """
     return message

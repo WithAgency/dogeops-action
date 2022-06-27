@@ -7,16 +7,21 @@ from typefit.httpx_models import HeaderTypes
 
 from dogeaction.models.dogeops import Context, Deployment, DeploymentRequest, Project
 
+API_URL = os.environ["DOGEOPS_API_URL"]
+
 
 class DogeApi(api.SyncClient):
 
-    BASE_URL = os.environ["DOGEOPS_API_URL"]
+    BASE_URL = API_URL
 
     def __init__(self, token: str):
         super().__init__()
         self._token = token
 
     def headers(self) -> Optional[HeaderTypes]:
+        """
+        Authorization via API Key.
+        """
         return {"X-API-KEY": self._token}
 
     def extract(self, data: Any, hint: Any) -> Any:
@@ -38,12 +43,10 @@ class DogeApi(api.SyncClient):
 
     def __make_deployment(  # noqa
         self,
-        project_id: str,
         context: Context,
         manifest: dict[str, Any],
     ) -> DeploymentRequest:
         return DeploymentRequest(
-            project=project_id,
             context=context,
             manifest=manifest,
         )
@@ -51,18 +54,16 @@ class DogeApi(api.SyncClient):
     @api.post("api/deployment/", json=__make_deployment)  # noqa
     def deploy(
         self,
-        project_id: str,
         context: Context,
         manifest: dict[str, Any],
     ) -> Deployment:
-        pass
+        """
+        Use the manifest and the context to create a new deployment for
+        this project.
+        """
 
-    @lru_cache
     @api.get("api/project/")
-    def list_projects(self) -> list[Project]:
-        pass
-
-    def project(self, url: str) -> Optional[Project]:
-        for p in self.list_projects():
-            if p.repo == url:
-                return p
+    def project(self) -> Optional[Project]:
+        """
+        Retrieve this project from the API.
+        """
