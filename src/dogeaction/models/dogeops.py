@@ -74,7 +74,6 @@ class Component:
 @dataclass
 class Deployment:
     id: str
-    project: str
     status: Status
     components: Optional[dict[str, Component]] = field(default_factory=dict)
 
