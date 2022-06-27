@@ -75,6 +75,7 @@ class Component:
 class Deployment:
     id: str
     status: Status
+    progress_url: str
     components: Optional[dict[str, Component]] = field(default_factory=dict)
 
 
