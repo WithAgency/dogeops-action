@@ -8,7 +8,7 @@ on:
   # publish on pushes to the main branch (image tagged as "latest")
   push:
     branches:
-      - main
+      - *
 
 jobs:
   lint:
@@ -16,7 +16,7 @@ jobs:
 
   docker_publish:
     needs: lint
-    if: {{ github.event_name == 'release' || github.repo.ref }}
+    if: {{ github.event_name == 'release' || github.repo.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
 
     steps:
