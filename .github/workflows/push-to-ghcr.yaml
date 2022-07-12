@@ -13,7 +13,6 @@ on:
 jobs:
   lint:
     uses: WITH-Test/workflows/.github/workflows/lint-python.yml@main
-    runs-on: "ubuntu-latest"
 
   docker_publish:
     runs-on: "ubuntu-latest"
