@@ -19,7 +19,7 @@ class MuchError(Exception):
     pass
 
 
-def has_file(file: str) -> bool:
+def has_dogefile(file: str) -> bool:
     if os.path.isfile(file):
         return True
 
@@ -27,7 +27,10 @@ def has_file(file: str) -> bool:
 
 
 def upload_manifest(manifest: str, ctx: dm.Context) -> Optional[dm.Deployment]:
-    if not has_file(manifest):
+    """
+    Submit the manifest and context to the API.
+    """
+    if not has_dogefile(manifest):
         return None
 
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
