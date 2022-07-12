@@ -1,11 +1,11 @@
 name: Lint
 
-on:
-  push:
-    tags:
-      - "*"
-    branches:
-      - "*"
+on: {}
+#  push:
+#    tags:
+#      - "*"
+#    branches:
+#      - "*"
 
 jobs:
   lint:

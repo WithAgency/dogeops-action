@@ -11,7 +11,12 @@ on:
       - main
 
 jobs:
+  lint:
+    uses: WITH-Test/workflows/.github/workflows/lint-python.yml@main
+
   docker_publish:
+    needs: lint
+    if: {{ github.event_name == 'release' || github.repo.ref }}
     runs-on: "ubuntu-20.04"
 
     steps:
