@@ -17,9 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: lowercase repo
+        run: |
+          echo "GHCR_REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
       # https://github.com/marketplace/actions/push-to-ghcr
       - name: Build and publish a Docker image for ${{ github.repository }}
         uses: macbre/push-to-ghcr@v8
         with:
-          image_name: ${{ github.repository }}
+          image_name: ${{ env.GHCR_REPO }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
