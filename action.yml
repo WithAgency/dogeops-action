@@ -9,4 +9,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'WITH-Test/dogeops-action/dogeops-action'
