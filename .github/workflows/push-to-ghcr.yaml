@@ -8,16 +8,17 @@ on:
   # publish on pushes to the main branch (image tagged as "latest")
   push:
     branches:
-      - *
+      - "*"
 
 jobs:
   lint:
     uses: WITH-Test/workflows/.github/workflows/lint-python.yml@main
+    runs-on: "ubuntu-latest"
 
   docker_publish:
+    runs-on: "ubuntu-latest"
     needs: lint
-    if: {{ github.event_name == 'release' || github.repo.ref == 'refs/heads/main' }}
-    runs-on: "ubuntu-20.04"
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v2
