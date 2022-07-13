@@ -34,7 +34,8 @@ class DogeApi(api.SyncClient):
         :return:
         """
         try:
-            if {"results", "next", "previous", "count"} == set(data.keys()):
+            # data contains at least these keys
+            if len({"results", "next", "previous", "count"}.intersection(set(data.keys()))) == 4:
                 return data["results"]
         except (ValueError, Exception):
             pass

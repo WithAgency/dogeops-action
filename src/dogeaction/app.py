@@ -35,7 +35,6 @@ def upload_manifest(manifest: str, ctx: dm.Context) -> Optional[dm.Deployment]:
 
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
 
-    # project = api.project()
     with open(manifest) as man:
         spec = yaml.safe_load(man)
         try:
