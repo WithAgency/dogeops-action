@@ -14,7 +14,7 @@ class Repo:
 
 
 @dataclass
-class Committer:
+class Pusher:
     username: str
     email: str
 
@@ -42,11 +42,11 @@ class Organization:
 class Context:
     event: str
     repo: Repo
-    committer: Committer
+    pusher: Pusher
     commit: Commit
-    issue: Issue
     organization: Organization
     payload: Any
+    issue: Optional[Issue] = None
 
 
 @dataclass
