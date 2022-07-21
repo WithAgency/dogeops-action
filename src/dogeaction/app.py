@@ -1,11 +1,9 @@
-import json
 import os
 from pathlib import Path
-from typing import Any, Optional
 
 import yaml
 from actions_toolkit import core, github
-from httpx import HTTPError, TimeoutException
+from httpx import HTTPError
 
 from dogeaction.adapters import from_github_context
 from dogeaction.api import DogeApi

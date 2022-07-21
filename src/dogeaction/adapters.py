@@ -37,7 +37,9 @@ def get_pusher(ctx) -> dm.Pusher:
             email=payload["pusher"]["email"],
         )
     else:
-        raise ValueError(f"Unsupported event type: {event}, because it contains no pusher information")
+        raise ValueError(
+            f"Unsupported event type: {event}, because it contains no pusher information"
+        )
 
     return committer
 
@@ -62,7 +64,9 @@ def get_organization(ctx) -> dm.Organization:
             id=org["id"],
         )
     else:
-        raise ValueError(f"Unsupported event type: {event}, because it contains no organization information")
+        raise ValueError(
+            f"Unsupported event type: {event}, because it contains no organization information"
+        )
 
     return organization
 

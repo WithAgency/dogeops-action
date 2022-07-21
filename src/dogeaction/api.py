@@ -35,7 +35,14 @@ class DogeApi(api.SyncClient):
         """
         try:
             # data contains at least these keys
-            if len({"results", "next", "previous", "count"}.intersection(set(data.keys()))) == 4:
+            if (
+                len(
+                    {"results", "next", "previous", "count"}.intersection(
+                        set(data.keys())
+                    )
+                )
+                == 4
+            ):
                 return data["results"]
         except (ValueError, Exception):
             pass
