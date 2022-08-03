@@ -15,7 +15,7 @@ def get_repo(ctx) -> dm.Repo:
         repo=ctx.repo.repo,
         owner=ctx.repo.owner,
         ref=ctx.ref,
-        url=f"{ctx.server_url}/{ctx.repo.owner}/{ctx.repo.repo}.git",
+        url=f"{ctx.server_url}/{ctx.repo.owner}/{ctx.repo.repo}",
     )
 
 
