@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 
 import yaml
 from actions_toolkit import core, github
@@ -24,7 +25,7 @@ def has_dogefile(file: str) -> bool:
     return False
 
 
-def upload_manifest(manifest: str, ctx: dm.Context) -> dm.Deployment:
+def upload_manifest(manifest: str, ctx: dm.Context) -> Optional[dm.Deployment]:
     """
     Submit the manifest and context to the API.
     """
