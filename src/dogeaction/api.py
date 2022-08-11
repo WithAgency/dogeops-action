@@ -59,7 +59,7 @@ class DogeApi(api.SyncClient):
             manifest=manifest,
         )
 
-    @api.post("api/deployment/", json=__make_deployment)  # noqa
+    @api.post("doge/deployment/", json=__make_deployment)  # noqa
     def deploy(
         self,
         context: Context,
@@ -68,10 +68,4 @@ class DogeApi(api.SyncClient):
         """
         Use the manifest and the context to create a new deployment for
         this project.
-        """
-
-    @api.get("api/project/")
-    def project(self) -> Optional[Project]:
-        """
-        Retrieve this project from the API.
         """
