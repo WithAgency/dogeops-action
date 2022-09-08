@@ -1,5 +1,4 @@
 import os
-from functools import lru_cache
 from typing import Any, Optional
 
 from typefit import api
@@ -59,7 +58,7 @@ class DogeApi(api.SyncClient):
             manifest=manifest,
         )
 
-    @api.post("doge/deployment/", json=__make_deployment)  # noqa
+    @api.post("api/doge/deployment/", json=__make_deployment)  # noqa
     def deploy(
         self,
         context: Context,
