@@ -20,7 +20,7 @@ jobs:
     if: github.event_name == 'release' || github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: lowercase repo
         run: |

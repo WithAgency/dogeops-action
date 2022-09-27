@@ -7,4 +7,4 @@ the requested components.
 
 Environment variables for this action:
 - `DOGEOPS_API_URL` : instance in charge of this project
-- `DOGEOPS_API_TOKEN` : project API key
+- `DOGEOPS_API_KEY` : project API key
