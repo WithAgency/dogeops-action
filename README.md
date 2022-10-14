@@ -1,6 +1,6 @@
 # DogeOps : GitHub Action
 
-This action will check the root of the repo for a file called `doge.yaml` and deploy
+This action will check the root of the repo for a file called `Dogefile` (yaml) and deploy
 the requested components.
 
 ## Prerequisites
