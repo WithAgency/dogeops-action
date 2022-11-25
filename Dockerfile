@@ -1,5 +1,5 @@
-ARG PYTHON_VERSION=3.10
-ARG POETRY_VERSION=1.1.13
+ARG PYTHON_VERSION=3.11
+ARG POETRY_VERSION=1.2.2
 
 FROM python:${PYTHON_VERSION}-bullseye as poetry
 
@@ -23,7 +23,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 COPY poetry.lock pyproject.toml /app/
 RUN poetry config virtualenvs.in-project true --local
-RUN poetry install --no-dev
+RUN poetry install --only main --no-ansi
 
 COPY ./src/ .
 
