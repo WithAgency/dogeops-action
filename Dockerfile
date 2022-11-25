@@ -5,7 +5,9 @@ FROM python:${PYTHON_VERSION}-bullseye as poetry
 
 RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=${POETRY_VERSION} POETRY_HOME=/usr python -
 
-FROM poetry
+FROM poetry as runtime
+
+LABEL org.opencontainers.image.description="GitHub Action to manage and deploy an application Doge-style"
 
 RUN apt-get update  \
     && apt-get upgrade -y \
