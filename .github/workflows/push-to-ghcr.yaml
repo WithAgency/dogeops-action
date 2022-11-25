@@ -28,7 +28,7 @@ jobs:
 
       # https://github.com/marketplace/actions/push-to-ghcr
       - name: Build and publish a Docker image for ${{ github.repository }}
-        uses: macbre/push-to-ghcr@v8
+        uses: macbre/push-to-ghcr@v12
         with:
           image_name: ${{ env.GHCR_REPO }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
