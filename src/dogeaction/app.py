@@ -57,7 +57,7 @@ def main():
         ctx = make_context(github.Context())
         deployment = upload_manifest(doge_file, ctx)
         if not deployment:
-            core.set_failed(f"{doge_file} does not exist")
+            raise MuchError(f"{doge_file} does not exist")
 
         core.info(happy_message(deployment))
     except (MuchError, ValueError) as err:
