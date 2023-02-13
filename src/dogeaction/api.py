@@ -58,7 +58,7 @@ class DogeApi(api.SyncClient):
             manifest=manifest,
         )
 
-    @api.post("back/api/doge/deployment/", json=__make_deployment)  # noqa
+    @api.post("back/api/paas/deployment/", json=__make_deployment)  # noqa
     def deploy(
         self,
         context: Context,

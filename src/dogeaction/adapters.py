@@ -1,6 +1,6 @@
 from enum import Enum
 
-from actions_toolkit import github
+from actions_toolkit import core, github
 
 from .models import dogeops as dm
 
@@ -27,14 +27,31 @@ def get_issue(ctx) -> dm.Issue:
     )
 
 
+def get_user_from_pull_request(number: int):
+    github.get_octokit(core.get)
+
+
 def get_pusher(ctx) -> dm.Pusher:
     event = ctx.event_name
     payload = ctx.payload
 
-    if "pusher" in payload:
+    if event == "push":
+        user = payload["pusher"]
         committer = dm.Pusher(
-            username=payload["pusher"]["name"],
-            email=payload["pusher"]["email"],
+            username=user["name"],
+            email=user["email"],
+        )
+    elif False and event == "pull_request":
+        # call GH api for commits info on this PR
+        pr = payload["pull_request"]
+        number = pr["number"]
+
+        return get_user_from_pull_request(number)
+
+        user = pr["head"]["user"]
+        committer = dm.Pusher(
+            username=user["name"],
+            email=user["email"],
         )
     else:
         raise ValueError(
