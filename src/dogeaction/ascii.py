@@ -63,7 +63,7 @@ def happy_message(dep: Optional[Deployment] = None) -> str:
     message = f"""
 {DOGE_TO_THE_MOON}
 
-Progress: {f'{dep.progress_url}/'}
+Progress: {f'{dep.progress_url}'}
 """
     return message
 
