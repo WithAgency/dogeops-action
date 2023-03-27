@@ -1,5 +1,5 @@
 ---
-name: Build and publish a Docker image to Docker Hub
+name: Build and publish to Docker Hub
 
 on:
   workflow_dispatch:
