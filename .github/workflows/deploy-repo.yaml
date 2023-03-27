@@ -48,6 +48,7 @@ jobs:
 #
         with:
           image: modelw/dogeops-action:${{ inputs.tag }}
+          run: poetry run deploy
           options: |
             -v ${{ github.workspace }}:/github/workspace
             -e INPUT_DOGEFILE="${{ inputs.dogefile }}"
