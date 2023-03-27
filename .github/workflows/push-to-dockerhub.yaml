@@ -11,6 +11,10 @@ on:
     branches:
       - "main"
       - "develop"
+    paths:
+      - "!.github/"
+      - "!.gitignore"
+      - "Makefile"
 
 env:
   IMAGE_NAME: dogeops-action
