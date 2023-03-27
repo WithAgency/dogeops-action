@@ -13,7 +13,7 @@ from dogeaction.ascii import happy_message, sad_message
 from dogeaction.models import dogeops as dm
 from dogeaction.models.dogeops import Options
 
-WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", "/github/workspace"))
+WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", "."))
 
 
 class MuchError(Exception):
