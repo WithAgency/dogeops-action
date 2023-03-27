@@ -32,4 +32,4 @@ COPY . .
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["poetry", "run", "doge"]
+CMD ["poetry", "run", "deploy"]
