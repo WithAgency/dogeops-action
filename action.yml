@@ -10,5 +10,5 @@ inputs:
 runs:
   using: "docker"
 #  image: "Dockerfile"
-  image: 'docker://wowwith/dogeops-action:latest'
+  image: 'docker://modelw/dogeops-action:latest'
 
