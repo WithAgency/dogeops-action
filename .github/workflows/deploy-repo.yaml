@@ -24,21 +24,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Debug
-        run: |
-          echo "Dogefile: ${{ inputs.dogefile }}"
-          echo "API URL: ${{ inputs.api_url }}"
-          echo "Tag: ${{ inputs.tag }}"
-          echo "API Key (masked right?): ${{ secrets.api_key }}"
-          echo "Working Directory: $(pwd)"
-          echo "Files: $(ls -la)"
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Debug
+#        run: |
+#          echo "Dogefile: ${{ inputs.dogefile }}"
+#          echo "API URL: ${{ inputs.api_url }}"
+#          echo "Tag: ${{ inputs.tag }}"
+#          echo "API Key (masked right?): ${{ secrets.api_key }}"
+#          echo "Working Directory: $(pwd)"
+#          echo "Files: $(ls -la)"
 
       - name: Deploy to DogeOps
-        uses: ./
+        uses: WithAgency/dogeops-action@develop
         env:
           DOGEOPS_API_URL: ${{ inputs.api_url }}
           DOGEOPS_API_KEY: ${{ secrets.api_key }}
