@@ -20,8 +20,6 @@ on:
       api_key:
         description: 'DogeOps API Token'
         required: true
-        type: string
-
 
 jobs:
   deploy:
