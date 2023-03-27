@@ -1,11 +1,13 @@
-ARG PYTHON_VERSION=3.10
-ARG POETRY_VERSION=1.1.13
+ARG PYTHON_VERSION=3.11
+ARG POETRY_VERSION=1.2.2
 
 FROM python:${PYTHON_VERSION}-bullseye as poetry
 
 RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=${POETRY_VERSION} POETRY_HOME=/usr python -
 
-FROM poetry
+FROM poetry as runtime
+
+LABEL org.opencontainers.image.description="GitHub Action to manage and deploy an application Doge-style"
 
 RUN apt-get update  \
     && apt-get upgrade -y \
@@ -23,7 +25,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 COPY poetry.lock pyproject.toml /app/
 RUN poetry config virtualenvs.in-project true --local
-RUN poetry install --no-dev
+RUN poetry install --only main --no-ansi
 
 COPY ./src/ .
 

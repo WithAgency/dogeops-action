@@ -1,11 +1,10 @@
-import json
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import yaml
 from actions_toolkit import core, github
-from httpx import HTTPError, TimeoutException
+from httpx import HTTPError
 
 from dogeaction.adapters import from_github_context
 from dogeaction.api import DogeApi
@@ -35,37 +34,32 @@ def upload_manifest(manifest: str, ctx: dm.Context) -> Optional[dm.Deployment]:
 
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
 
-    # project = api.project()
     with open(manifest) as man:
         spec = yaml.safe_load(man)
         try:
-            deployment = api.deploy(context=ctx, manifest=spec)
+            return api.deploy(context=ctx, manifest=spec)
         except HTTPError as he:
             raise MuchError(he.args[0])
-
-    return deployment
 
 
 def make_context(ctx: github.Context) -> dm.Context:
     """
     Build a DogeOps context from a GitHub one.
     """
-    ctx = from_github_context(ctx)
-    return ctx
+    return from_github_context(ctx)
 
 
 def main():
     name = core.get_input("manifest")
     doge_file = f"{WORKSPACE / name}"
 
-    ctx = make_context(github.Context())
-
     try:
+        ctx = make_context(github.Context())
         deployment = upload_manifest(doge_file, ctx)
         if not deployment:
-            core.set_failed(f"{doge_file} does not exist")
+            raise MuchError(f"{doge_file} does not exist")
 
         core.info(happy_message(deployment))
-    except MuchError as me:
-        core.set_failed(f"{me.args[0]}")
+    except (MuchError, ValueError) as err:
+        core.set_failed(f"{err.args[0]}")
         core.info(sad_message())

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from actions_toolkit import github
+from actions_toolkit import core, github
 
 from .models import dogeops as dm
 
@@ -27,17 +27,36 @@ def get_issue(ctx) -> dm.Issue:
     )
 
 
-def get_committer(ctx) -> dm.Committer:
+def get_user_from_pull_request(number: int):
+    github.get_octokit(core.get)
+
+
+def get_pusher(ctx) -> dm.Pusher:
     event = ctx.event_name
     payload = ctx.payload
 
     if event == "push":
-        committer = dm.Committer(
-            username=payload["pusher"]["name"],
-            email=payload["pusher"]["email"],
+        user = payload["pusher"]
+        committer = dm.Pusher(
+            username=user["name"],
+            email=user["email"],
+        )
+    elif False and event == "pull_request":
+        # call GH api for commits info on this PR
+        pr = payload["pull_request"]
+        number = pr["number"]
+
+        return get_user_from_pull_request(number)
+
+        user = pr["head"]["user"]
+        committer = dm.Pusher(
+            username=user["name"],
+            email=user["email"],
         )
     else:
-        raise ValueError(f"Events of type {event} are not supported yet")
+        raise ValueError(
+            f"Unsupported event type: {event}, because it contains no pusher information"
+        )
 
     return committer
 
@@ -45,28 +64,26 @@ def get_committer(ctx) -> dm.Committer:
 def get_commit(ctx) -> dm.Commit:
     event = ctx.event_name
 
-    if event == "push":
-        commit = dm.Commit(
-            sha=ctx.sha,
-            ref=ctx.ref,
-        )
-    else:
-        raise ValueError(f"Events of type {event} are not supported yet")
+    commit = dm.Commit(
+        sha=ctx.sha,
+        ref=ctx.ref,
+    )
 
     return commit
 
 
 def get_organization(ctx) -> dm.Organization:
     event = ctx.event_name
-    org = ctx.payload["organization"]
 
-    if event == "push":
+    if org := ctx.payload.get("organization"):
         organization = dm.Organization(
             name=org["login"],
             id=org["id"],
         )
     else:
-        raise ValueError(f"Events of type {event} are not supported yet")
+        raise ValueError(
+            f"Unsupported event type: {event}, because it contains no organization information"
+        )
 
     return organization
 
@@ -75,7 +92,7 @@ def from_github_context(ctx: github.Context) -> dm.Context:
     payload = ctx.payload
 
     repo = get_repo(ctx)
-    committer = get_committer(ctx)
+    pusher = get_pusher(ctx)
     commit = get_commit(ctx)
     issue = get_issue(ctx)
     organization = get_organization(ctx)
@@ -83,7 +100,7 @@ def from_github_context(ctx: github.Context) -> dm.Context:
     return dm.Context(
         event=ctx.event_name,
         repo=repo,
-        committer=committer,
+        pusher=pusher,
         commit=commit,
         issue=issue,
         organization=organization,

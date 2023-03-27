@@ -1,12 +1,14 @@
-name: 'DogeOps to the mooooooooon 🚀'
-author: 'Carlos Gonzalez <carlos.gonzalez@with-madrid.com>'
-description: 'Upload a doge.yaml manifest to a DogeOps endpoint.'
+name: "DogeOps to the mooooooooon 🚀"
+author: "Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"
+description: "Upload a Dogefile yaml manifest to a DogeOps endpoint."
 
 inputs:
   manifest:
     description: "Name of the manifest file"
-    default: "doge.yaml"
+    default: "Dogefile"
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
+#  image: 'docker://ghcr.io/withagency/dogeops-action:latest'
+

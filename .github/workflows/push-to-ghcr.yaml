@@ -1,0 +1,34 @@
+name: Build and publish a Docker image to ghcr.io
+on:
+
+  # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
+  release:
+    types: [ published ]
+
+  # publish on pushes to the main branch (image tagged as "latest")
+  push:
+    branches:
+      - "main"
+    paths:
+      - "!.github/"
+
+  workflow_dispatch:
+
+jobs:
+#  lint:
+#    uses: WITH-Test/workflows/.github/workflows/lint-python.yml@main
+
+  docker_publish:
+    runs-on: "ubuntu-latest"
+#    needs: lint
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # https://github.com/marketplace/actions/push-to-ghcr
+      - name: Build and publish a Docker image for ${{ github.repository }}
+        uses: macbre/push-to-ghcr@v12
+        with:
+          image_name: ${{ github.repository }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

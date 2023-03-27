@@ -1,5 +1,4 @@
 import os
-from functools import lru_cache
 from typing import Any, Optional
 
 from typefit import api
@@ -34,7 +33,15 @@ class DogeApi(api.SyncClient):
         :return:
         """
         try:
-            if {"results", "next", "previous", "count"} == set(data.keys()):
+            # data contains at least these keys
+            if (
+                len(
+                    {"results", "next", "previous", "count"}.intersection(
+                        set(data.keys())
+                    )
+                )
+                == 4
+            ):
                 return data["results"]
         except (ValueError, Exception):
             pass
@@ -51,7 +58,7 @@ class DogeApi(api.SyncClient):
             manifest=manifest,
         )
 
-    @api.post("api/deployment/", json=__make_deployment)  # noqa
+    @api.post("back/api/paas/deployment/", json=__make_deployment)  # noqa
     def deploy(
         self,
         context: Context,
@@ -60,10 +67,4 @@ class DogeApi(api.SyncClient):
         """
         Use the manifest and the context to create a new deployment for
         this project.
-        """
-
-    @api.get("api/project/")
-    def project(self) -> Optional[Project]:
-        """
-        Retrieve this project from the API.
         """
