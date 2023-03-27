@@ -16,8 +16,7 @@ on:
       - "!.gitignore"
       - "Makefile"
 
-env:
-  IMAGE_NAME: dogeops-action
+  workflow_dispatch:
 
 jobs:
   docker_publish:
