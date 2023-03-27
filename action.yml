@@ -6,9 +6,12 @@ inputs:
   dogefile:
     description: "Name of the Dogefile"
     default: "Dogefile"
+  tag:
+    description: "Tag to use for the image"
+    default: "latest"
 
 runs:
   using: "docker"
 #  image: "Dockerfile"
-  image: 'docker://modelw/dogeops-action:latest'
+  image: 'docker://modelw/dogeops-action:${{ inputs.tag }}'
 
