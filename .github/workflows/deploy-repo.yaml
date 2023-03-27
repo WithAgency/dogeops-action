@@ -12,6 +12,10 @@ on:
         description: 'DogeOps API URL'
         required: true
         type: string
+      tag:
+        description: 'Image tag'
+        default: "latest"
+        type: string
     secrets:
       api_key:
         description: 'DogeOps API Token'
@@ -25,10 +29,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Deploy to DogeOps
-        uses: .
-        env:
-          DOGEOPS_API_URL: ${{ inputs.api_url }}
-          DOGEOPS_API_KEY: ${{ secrets.api_key }}
+      - name: Run the build process with Docker
+        uses: addnab/docker-run-action@v3
         with:
-          dogefile: ${{ inputs.dogefile }}
+          registry: ghcr.io
+          image: withagency/dogeops-action:${{ inputs.tag }}
+          options: -e INPUT_DOGEOPS_API_URL=${{ inputs.api_url }} -e DOGEOPS_API_KEY=${{ secrets.api_key }}
+#      - name: Deploy to DogeOps
+#        uses: .
+#        env:
+#          DOGEOPS_API_URL: ${{ inputs.api_url }}
+#          DOGEOPS_API_KEY: ${{ secrets.api_key }}
+#        with:
+#          dogefile: ${{ inputs.dogefile }}

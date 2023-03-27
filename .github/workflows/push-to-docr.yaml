@@ -1,0 +1,41 @@
+name: Build and publish a Docker image to ghcr.io
+on:
+
+  # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
+  release:
+    types: [ published ]
+
+  # publish on pushes to the main branch (image tagged as "latest")
+  push:
+    branches:
+      - "main"
+
+env:
+  IMAGE_NAME: dogeops-action
+  DOCR_NAME: dogeops-action
+
+jobs:
+  lint:
+    uses: WITH-Test/workflows/.github/workflows/lint-python.yml@main
+
+  docker_publish:
+    runs-on: "ubuntu-latest"
+    needs: lint
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: Install doctl                 # install the doctl on the runner
+        uses: digitalocean/action-doctl@v2
+        with:
+            token: ${{ secrets.DO_API_TOKEN }}
+
+      - name: Push image to DigitalOcean Container Registry
+        run: |
+          doctl registry login
+          docker tag $IMAGE_NAME registry.digitalocean.com/$DOCR_NAME/$IMAGE_NAME
+          docker push registry.digitalocean.com/$DOCR_NAME/$IMAGE_NAME
