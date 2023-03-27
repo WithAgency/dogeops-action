@@ -4,7 +4,13 @@ from typing import Any, Optional
 from typefit import api
 from typefit.httpx_models import HeaderTypes
 
-from dogeaction.models.dogeops import Context, Deployment, DeploymentRequest, Project
+from dogeaction.models.dogeops import (
+    Context,
+    Deployment,
+    DeploymentRequest,
+    Options,
+    Project,
+)
 
 API_URL = os.environ["DOGEOPS_API_URL"]
 
@@ -52,10 +58,12 @@ class DogeApi(api.SyncClient):
         self,
         context: Context,
         manifest: dict[str, Any],
+        options: Options,
     ) -> DeploymentRequest:
         return DeploymentRequest(
             context=context,
             manifest=manifest,
+            options=options,
         )
 
     @api.post("back/api/paas/deployment/", json=__make_deployment)  # noqa
@@ -63,6 +71,7 @@ class DogeApi(api.SyncClient):
         self,
         context: Context,
         manifest: dict[str, Any],
+        options: Options,
     ) -> Deployment:
         """
         Use the manifest and the context to create a new deployment for

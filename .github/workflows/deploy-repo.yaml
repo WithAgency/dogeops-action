@@ -1,0 +1,34 @@
+---
+name: Deploy Repository to DogeOps
+
+on:
+  workflow_call:
+    inputs:
+      dogefile:
+        description: 'Dogefile name'
+        default: 'Dogefile'
+        type: string
+      api_url:
+        description: 'DogeOps API URL'
+        required: true
+        type: string
+    secrets:
+      api_key:
+        description: 'DogeOps API Token'
+        required: true
+        type: string
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy to DogeOps
+        uses: .
+        env:
+          DOGEOPS_API_URL: ${{ inputs.api_url }}
+          DOGEOPS_API_KEY: ${{ secrets.api_key }}
+        with:
+          dogefile: ${{ inputs.dogefile }}

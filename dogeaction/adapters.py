@@ -67,6 +67,7 @@ def get_commit(ctx) -> dm.Commit:
     commit = dm.Commit(
         sha=ctx.sha,
         ref=ctx.ref,
+        message=ctx.payload["head_commit"]["message"],
     )
 
     return commit

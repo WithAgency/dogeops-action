@@ -23,6 +23,7 @@ class Pusher:
 class Commit:
     ref: str
     sha: str
+    message: str
 
 
 @dataclass
@@ -50,9 +51,16 @@ class Context:
 
 
 @dataclass
+class Options:
+    ignore: bool = False
+    notify: bool = True
+
+
+@dataclass
 class DeploymentRequest:
     context: Context
     manifest: dict[str, Any]
+    options: Options
 
 
 # -- Responses

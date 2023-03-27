@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from typing import Optional
 
@@ -10,6 +11,7 @@ from dogeaction.adapters import from_github_context
 from dogeaction.api import DogeApi
 from dogeaction.ascii import happy_message, sad_message
 from dogeaction.models import dogeops as dm
+from dogeaction.models.dogeops import Options
 
 WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", "/github/workspace"))
 
@@ -25,19 +27,24 @@ def has_dogefile(file: str) -> bool:
     return False
 
 
-def upload_manifest(manifest: str, ctx: dm.Context) -> Optional[dm.Deployment]:
+def upload_manifest(
+    manifest: str, ctx: dm.Context, opts: Options
+) -> Optional[dm.Deployment]:
     """
     Submit the manifest and context to the API.
     """
     if not has_dogefile(manifest):
         return None
 
+    if "DOGEOPS_API_KEY" not in os.environ:
+        raise MuchError("DOGEOPS_API_KEY not set")
+
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
 
     with open(manifest) as man:
         spec = yaml.safe_load(man)
         try:
-            return api.deploy(context=ctx, manifest=spec)
+            return api.deploy(context=ctx, manifest=spec, options=opts)
         except HTTPError as he:
             raise MuchError(he.args[0])
 
@@ -49,13 +56,40 @@ def make_context(ctx: github.Context) -> dm.Context:
     return from_github_context(ctx)
 
 
+OPTION_RE = re.compile(r"^# +doge: (?P<command>\w+)(?: (?P<args>.*))?$", re.I | re.M)
+
+
+def doge_options(ctx: dm.Context) -> Options:
+    """ """
+    commit_msg = ctx.commit.message
+    options = Options()
+
+    match = OPTION_RE.search(commit_msg)
+    if not match:
+        return options
+
+    command = match.group("command").lower()
+    args = match.group("args").lower().split()
+    if command == "ignore":
+        options.ignore = True
+    elif command.startswith("shh"):
+        options.notify = False
+
+    return options
+
+
 def main():
     name = core.get_input("manifest")
     doge_file = f"{WORKSPACE / name}"
 
     try:
         ctx = make_context(github.Context())
-        deployment = upload_manifest(doge_file, ctx)
+        options = doge_options(ctx)
+        if options.ignore:
+            core.info("Ignoring this commit")
+            return
+
+        deployment = upload_manifest(doge_file, ctx, options)
         if not deployment:
             raise MuchError(f"{doge_file} does not exist")
 

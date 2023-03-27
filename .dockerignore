@@ -1,5 +1,5 @@
 *
-!src/
+!dogeaction/
 !poetry.lock
 !pyproject.toml
 !entrypoint.sh
