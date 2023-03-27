@@ -12,6 +12,8 @@ on:
     branches:
       - "main"
       - "develop"
+    paths:
+      - "!.github/workflows/push-to-dockerhub.yaml"
 
 jobs:
   docker_publish:
