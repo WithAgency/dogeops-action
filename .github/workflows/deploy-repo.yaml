@@ -27,16 +27,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Run the build process with Docker
-        uses: addnab/docker-run-action@v3
+      - name: Deploy to DogeOps
+        uses: .
+        env:
+          DOGEOPS_API_URL: ${{ inputs.api_url }}
+          DOGEOPS_API_KEY: ${{ secrets.api_key }}
         with:
-          registry: ghcr.io
-          image: withagency/dogeops-action:${{ inputs.tag }}
-          options: -e INPUT_DOGEOPS_API_URL=${{ inputs.api_url }} -e DOGEOPS_API_KEY=${{ secrets.api_key }}
-#      - name: Deploy to DogeOps
-#        uses: .
-#        env:
-#          DOGEOPS_API_URL: ${{ inputs.api_url }}
-#          DOGEOPS_API_KEY: ${{ secrets.api_key }}
-#        with:
-#          dogefile: ${{ inputs.dogefile }}
+          dogefile: ${{ inputs.dogefile }}

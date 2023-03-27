@@ -3,12 +3,12 @@ author: "Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"
 description: "Upload a Dogefile yaml manifest to a DogeOps endpoint."
 
 inputs:
-  manifest:
-    description: "Name of the manifest file"
+  dogefile:
+    description: "Name of the Dogefile"
     default: "Dogefile"
 
 runs:
   using: "docker"
 #  image: "Dockerfile"
-  image: 'docker://ghcr.io/WithAgency/dogeops-action:latest'
+  image: 'docker://wowwith/dogeops-action:latest'
 
