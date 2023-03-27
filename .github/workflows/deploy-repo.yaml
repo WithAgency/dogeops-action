@@ -28,7 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Deploy to DogeOps
-        uses: .
+        uses: ./
         env:
           DOGEOPS_API_URL: ${{ inputs.api_url }}
           DOGEOPS_API_KEY: ${{ secrets.api_key }}
