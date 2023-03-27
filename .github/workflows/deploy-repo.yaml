@@ -50,7 +50,28 @@ jobs:
           image: modelw/dogeops-action:${{ inputs.tag }}
           run: poetry run deploy
           options: |
+            # Docker
             -v ${{ github.workspace }}:/github/workspace
+            # GitHub Actions
+            -e GITHUB_WORKSPACE="${{ github.workspace }}"
+            -e GITHUB_EVENT_PATH="${{ github.event.path }}"
+            -e GITHUB_EVENT_NAME="${{ github.event.name }}"
+            -e GITHUB_SHA="${{ github.sha }}"
+            -e GITHUB_PATH="${{ github.path }}"
+            -e GITHUB_STATE="${{ github.state }}"
+            -e GITHUB_REF="${{ github.ref }}"
+            -e GITHUB_WORKFLOW="${{ github.workflow }}"
+            -e GITHUB_ACTION="${{ github.action }}"
+            -e GITHUB_JOB="${{ github.job }}"
+            -e GITHUB_RUN_NUMBER="${{ github.run.number }}"
+            -e GITHUB_RUN_ID="${{ github.run.id }}"
+            -e GITHUB_API_URL="${{ github.api.url }}"
+            -e GITHUB_SERVER_URL="${{ github.server.url }}"
+            -e GITHUB_GRAPHQL_URL="${{ github.graphql.url }}"
+            -e GITHUB_REPOSITORY="${{ github.repository }}"
+            # DogeOps
             -e INPUT_DOGEFILE="${{ inputs.dogefile }}"
             -e DOGEOPS_API_URL="${{ inputs.api_url }}"
             -e DOGEOPS_API_KEY="${{ secrets.api_key }}"
+
+
