@@ -13,5 +13,5 @@ inputs:
 runs:
   using: "docker"
 #  image: "Dockerfile"
-  image: 'docker://modelw/dogeops-action:${{ inputs.tag }}'
+  image: 'docker://modelw/dogeops-action:develop'
 
