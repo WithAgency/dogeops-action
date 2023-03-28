@@ -100,7 +100,7 @@ def ci(event: str = typer.Argument("push", help="The event name")):
     name = core.get_input("manifest") or "Dogefile"
     dogefile = WORKSPACE / name
     try:
-        deployment = _trigger(event, dogefile)
+        deployment = _trigger(event, dogefile, repo=WORKSPACE)
         core.info(happy_message(deployment))
     except (MuchError, ValueError) as err:
         core.set_failed(f"{err.args[0]}")
