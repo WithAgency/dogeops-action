@@ -25,38 +25,30 @@ class MuchError(Exception):
     pass
 
 
-def has_dogefile(file: str) -> bool:
-    """
-    Check if the Dogefile exists.
-    """
-    if os.path.isfile(file):
-        return True
-
-    return False
-
-
 def upload_manifest(
-    manifest: str,
+    dogefile: Path,
     ctx: dm.Context,
     opts: Options,
-) -> Optional[dm.Deployment]:
+) -> dm.Deployment:
     """
     Submit the manifest and context to the API.
     """
-    if not has_dogefile(manifest):
-        return None
+    if not dogefile.exists():
+        raise MuchError(f"Dogefile not found: {dogefile}")
 
     if "DOGEOPS_API_KEY" not in os.environ:
         raise MuchError("DOGEOPS_API_KEY not set")
 
     api = DogeApi(os.environ["DOGEOPS_API_KEY"])
 
-    with open(manifest) as man:
+    with open(dogefile) as man:
         spec = yaml.safe_load(man)
         try:
-            return api.deploy(context=ctx, dogefile=spec, options=opts)
+            deployment = api.deploy(context=ctx, dogefile=spec, options=opts)
         except HTTPError as he:
             raise MuchError(he.args[0])
+
+    return deployment
 
 
 OPTION_RE = re.compile(r"^# +doge: (?P<command>\w+)(?: (?P<args>.*))?$", re.I | re.M)
@@ -126,7 +118,7 @@ def deploy(
         return 1
 
 
-def _trigger(event: str, dogefile: Path, repo: str = None) -> Optional[dm.Deployment]:
+def _trigger(event: str, dogefile: Path, repo: Path = None) -> Optional[dm.Deployment]:
     """
     Trigger a deployment.
     Builds a context from the event and submits it to the API.
@@ -137,8 +129,6 @@ def _trigger(event: str, dogefile: Path, repo: str = None) -> Optional[dm.Deploy
         core.info("Ignoring this commit")
         return
 
-    print(f"Context: {ctx}")
-    # return dm.Deployment(id="1234", status="ok", progress_url="https://dogeops.com")
     deployment = upload_manifest(dogefile, ctx, options)
     if not deployment:
         raise MuchError(f"{dogefile} does not exist")
