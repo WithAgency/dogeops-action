@@ -38,15 +38,16 @@ jobs:
 #          echo "Files: $(ls -la)"
 
       - name: Deploy to DogeOps
-        uses: addnab/docker-run-action@v3
-#        uses: WithAgency/dogeops-action@develop
-#        env:
-#          DOGEOPS_API_URL: ${{ inputs.api_url }}
-#          DOGEOPS_API_KEY: ${{ secrets.api_key }}
-#        with:
-#          dogefile: ${{ inputs.dogefile }}
-#
+        uses: WithAgency/dogeops-action@develop
+        env:
+          DOGEOPS_API_URL: ${{ inputs.api_url }}
+          DOGEOPS_API_KEY: ${{ secrets.api_key }}
         with:
-          image: modelw/dogeops-action:${{ inputs.tag }}
-          run: poetry run doge ci
-          options: -v ${{ github.workspace }}:/github/workspace
+          dogefile: ${{ inputs.dogefile }}
+
+#      - name: Deploy to DogeOps
+#        uses: addnab/docker-run-action@v3
+#        with:
+#          image: modelw/dogeops-action:${{ inputs.tag }}
+#          run: poetry run doge ci
+#          options: -v ${{ github.workspace }}:/github/workspace
