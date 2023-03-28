@@ -3,7 +3,8 @@ ARG POETRY_VERSION=1.4.1
 
 FROM python:${PYTHON_VERSION}-alpine
 
-RUN wget -O- https://install.python-poetry.org | POETRY_VERSION=${POETRY_VERSION} POETRY_HOME=/usr python -
+RUN apk add --no-cache git \
+    && wget -O- https://install.python-poetry.org | POETRY_VERSION=${POETRY_VERSION} POETRY_HOME=/usr python -
 
 LABEL org.opencontainers.image.description="GitHub Action to manage and deploy an application Doge-style"
 
