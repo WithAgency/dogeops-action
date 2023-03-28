@@ -49,6 +49,4 @@ jobs:
         with:
           image: modelw/dogeops-action:${{ inputs.tag }}
           run: poetry run doge ci
-          options: |
-            # Docker
-            -v ${{ github.workspace }}:/github/workspace
+          options: -v ${{ github.workspace }}:/github/workspace
