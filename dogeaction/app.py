@@ -3,17 +3,22 @@ import re
 from pathlib import Path
 from typing import Optional
 
+import typer
 import yaml
-from actions_toolkit import core, github
+from actions_toolkit import core
 from httpx import HTTPError
 
-from dogeaction.adapters import from_github_context
+from dogeaction.adapters import make_context
 from dogeaction.api import DogeApi
 from dogeaction.ascii import happy_message, sad_message
 from dogeaction.models import dogeops as dm
 from dogeaction.models.dogeops import Options
 
-WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", "."))
+BASE_DIR = Path(__file__).parent.parent
+WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", BASE_DIR))
+
+
+app = typer.Typer()
 
 
 class MuchError(Exception):
@@ -21,6 +26,9 @@ class MuchError(Exception):
 
 
 def has_dogefile(file: str) -> bool:
+    """
+    Check if the Dogefile exists.
+    """
     if os.path.isfile(file):
         return True
 
@@ -28,7 +36,9 @@ def has_dogefile(file: str) -> bool:
 
 
 def upload_manifest(
-    manifest: str, ctx: dm.Context, opts: Options
+    manifest: str,
+    ctx: dm.Context,
+    opts: Options,
 ) -> Optional[dm.Deployment]:
     """
     Submit the manifest and context to the API.
@@ -44,23 +54,21 @@ def upload_manifest(
     with open(manifest) as man:
         spec = yaml.safe_load(man)
         try:
-            return api.deploy(context=ctx, manifest=spec, options=opts)
+            return api.deploy(context=ctx, dogefile=spec, options=opts)
         except HTTPError as he:
             raise MuchError(he.args[0])
-
-
-def make_context(ctx: github.Context) -> dm.Context:
-    """
-    Build a DogeOps context from a GitHub one.
-    """
-    return from_github_context(ctx)
 
 
 OPTION_RE = re.compile(r"^# +doge: (?P<command>\w+)(?: (?P<args>.*))?$", re.I | re.M)
 
 
 def doge_options(ctx: dm.Context) -> Options:
-    """ """
+    """
+    Parse the commit message for DogeOps options.
+
+    :param ctx: The DogeOps context.
+    :return: The DogeOps options.
+    """
     commit_msg = ctx.commit.message
     options = Options()
 
@@ -68,32 +76,71 @@ def doge_options(ctx: dm.Context) -> Options:
     if not match:
         return options
 
-    command = match.group("command").lower()
-    args = match.group("args").lower().split()
-    if command == "ignore":
+    command = match.group("command")
+    if command is not None:
+        command = command.lower()
+
+    args = match.group("args")
+    if args is not None:
+        args = args.lower().split()
+
+    if command == "stay":
         options.ignore = True
-    elif command.startswith("shh"):
+    elif command == "quiet":
         options.notify = False
 
     return options
 
 
-def main():
-    name = core.get_input("manifest")
-    doge_file = f"{WORKSPACE / name}"
-
+@app.command(help="Trigger a DogeOps deployment (marked as 'push')")
+def ci(event: str = typer.Argument("push", help="The event name")):
+    """
+    Trigger a deployment manually.
+    """
+    name = core.get_input("manifest") or "Dogefile"
+    dogefile = WORKSPACE / name
     try:
-        ctx = make_context(github.Context())
-        options = doge_options(ctx)
-        if options.ignore:
-            core.info("Ignoring this commit")
-            return
-
-        deployment = upload_manifest(doge_file, ctx, options)
-        if not deployment:
-            raise MuchError(f"{doge_file} does not exist")
-
+        deployment = _trigger(event, dogefile)
         core.info(happy_message(deployment))
     except (MuchError, ValueError) as err:
         core.set_failed(f"{err.args[0]}")
         core.info(sad_message())
+
+
+@app.command(help="Trigger a DogeOps deployment (marked as 'manual')")
+def deploy(
+    event: str = typer.Option("manual", "--event", "-e", help="The event name"),
+    repo: Path = typer.Argument(..., help="The path to the local repository"),
+    name: str = typer.Option("Dogefile", help="The Dogefile name"),
+):
+    """
+    Trigger a deployment manually.
+    """
+    dogefile = repo / name
+    try:
+        deployment = _trigger(event, dogefile, repo)
+        typer.secho(happy_message(deployment), fg=typer.colors.GREEN)
+    except (MuchError, ValueError) as err:
+        typer.secho(sad_message(), fg=typer.colors.RED)
+        typer.secho(f"{err.args[0]}", fg=typer.colors.RED)
+        return 1
+
+
+def _trigger(event: str, dogefile: Path, repo: str = None) -> Optional[dm.Deployment]:
+    """
+    Trigger a deployment.
+    Builds a context from the event and submits it to the API.
+    """
+    ctx = make_context(event, repo)
+    options = doge_options(ctx)
+    if options.ignore:
+        core.info("Ignoring this commit")
+        return
+
+    print(f"Context: {ctx}")
+    # return dm.Deployment(id="1234", status="ok", progress_url="https://dogeops.com")
+    deployment = upload_manifest(dogefile, ctx, options)
+    if not deployment:
+        raise MuchError(f"{dogefile} does not exist")
+
+    return deployment

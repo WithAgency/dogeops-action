@@ -57,12 +57,12 @@ class DogeApi(api.SyncClient):
     def __make_deployment(  # noqa
         self,
         context: Context,
-        manifest: dict[str, Any],
+        dogefile: dict[str, Any],
         options: Options,
     ) -> DeploymentRequest:
         return DeploymentRequest(
             context=context,
-            manifest=manifest,
+            dogefile=dogefile,
             options=options,
         )
 
@@ -70,7 +70,7 @@ class DogeApi(api.SyncClient):
     def deploy(
         self,
         context: Context,
-        manifest: dict[str, Any],
+        dogefile: dict[str, Any],
         options: Options,
     ) -> Deployment:
         """

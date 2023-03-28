@@ -1,7 +1,5 @@
-#!/usr/bin/env -S poetry run python
-import os
-
-from app import main
+#!/usr/bin/env python
+from dogeaction.app import app
 
 if __name__ == "__main__":
-    main()
+    app()

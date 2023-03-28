@@ -1,40 +1,30 @@
-from enum import Enum
+from actions_toolkit import github
 
-from actions_toolkit import core, github
-
-from .models import dogeops as dm
-
-
-class Event(str, Enum):
-    PUSH = "push"
-    MANUAL = "manual"
+from dogeaction.models import dogeops as dm
 
 
 def get_repo(ctx) -> dm.Repo:
+    """
+    Get the repo from the github context.
+    """
     return dm.Repo(
         repo=ctx.repo.repo,
-        owner=ctx.repo.owner,
         ref=ctx.ref,
         url=f"{ctx.server_url}/{ctx.repo.owner}/{ctx.repo.repo}",
     )
 
 
-def get_issue(ctx) -> dm.Issue:
-    return dm.Issue(
-        owner=ctx.issue.owner,
-        repo=ctx.issue.repo,
-        number=ctx.issue.number,
-    )
-
-
-def get_pusher(ctx) -> dm.Pusher:
+def get_author(ctx) -> dm.Author:
+    """
+    Get the author from the github context.
+    """
     event = ctx.event_name
     payload = ctx.payload
 
     if event == "push":
-        user = payload["pusher"]
-        committer = dm.Pusher(
-            username=user["name"],
+        user = payload["author"]
+        committer = dm.Author(
+            name=user["name"],
             email=user["email"],
         )
     else:
@@ -46,8 +36,9 @@ def get_pusher(ctx) -> dm.Pusher:
 
 
 def get_commit(ctx) -> dm.Commit:
-    event = ctx.event_name
-
+    """
+    Get the commit from the github context.
+    """
     commit = dm.Commit(
         sha=ctx.sha,
         ref=ctx.ref,
@@ -63,7 +54,6 @@ def get_organization(ctx) -> dm.Organization:
     if org := ctx.payload.get("organization"):
         organization = dm.Organization(
             name=org["login"],
-            id=org["id"],
         )
     else:
         raise ValueError(
@@ -73,21 +63,20 @@ def get_organization(ctx) -> dm.Organization:
     return organization
 
 
-def from_github_context(ctx: github.Context) -> dm.Context:
+def from_github(event: str) -> dm.Context:
+    ctx = github.Context()
     payload = ctx.payload
 
     repo = get_repo(ctx)
-    pusher = get_pusher(ctx)
+    author = get_author(ctx)
     commit = get_commit(ctx)
-    issue = get_issue(ctx)
     organization = get_organization(ctx)
 
     return dm.Context(
-        event=ctx.event_name,
+        event=event,
         repo=repo,
-        pusher=pusher,
+        author=author,
         commit=commit,
-        issue=issue,
         organization=organization,
         payload=payload,
     )
