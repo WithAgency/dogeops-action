@@ -55,10 +55,10 @@ def make_context(event: str, repo: str = None) -> Context:
     When running in a GitHub Action, the context is built from the environment variables.
     When running locally, the context is built from the .git directory and properties.
     """
-    if os.getenv("GITHUB_ACTIONS") == "true":
-        from dogeaction.adapters.github import from_github
-
-        return from_github(event)
+    # if os.getenv("GITHUB_ACTIONS") == "true":
+    #     from dogeaction.adapters.github import from_github
+    #
+    #     return from_github(event)
 
     from dogeaction.adapters.repository import from_git_repo
 
