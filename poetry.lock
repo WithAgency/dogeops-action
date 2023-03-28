@@ -456,7 +456,7 @@ tests = ["asttokens", "littleutils", "pytest", "rich"]
 name = "gitdb"
 version = "4.0.10"
 description = "Git Object Database"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -471,7 +471,7 @@ smmap = ">=3.0.1,<6"
 name = "gitpython"
 version = "3.1.31"
 description = "GitPython is a Python library used to interact with Git repositories"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -1125,7 +1125,7 @@ files = [
 name = "smmap"
 version = "5.0.0"
 description = "A pure Python implementation of a sliding window memory map manager"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -1363,4 +1363,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "3361553621265e881b1229d57c59050fd65e945913f1a1c89f6a6bb58a5affe7"
+content-hash = "e141bd79227bdc5e09637ce6c27f08855f49406eab65425ced759bf0743282fe"
