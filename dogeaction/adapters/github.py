@@ -1,4 +1,4 @@
-from actions_toolkit import github, core
+from actions_toolkit import github
 
 from dogeaction.models import dogeops as dm
 
@@ -68,14 +68,10 @@ def from_github(event: str) -> dm.Context:
     ctx = github.Context()
     payload = ctx.payload
 
-    core.info(f"from_github {event} {ctx} {payload}")
-
     repo = get_repo(ctx)
     author = get_author(ctx)
     commit = get_commit(ctx)
     organization = get_organization(ctx)
-
-    core.info(f"from_github {event} {repo} {author} {commit} {organization} {payload}")
 
     return dm.Context(
         event=event,

@@ -65,15 +65,10 @@ def make_context(event: str, repo: Path) -> Context:
     """
     if os.environ.get("GITHUB_ACTIONS") != "true":
         from dogeaction.adapters.repository import from_git_repo
-        from actions_toolkit import core
-        core.info(f"from_git_repo {event} {repo}")
+
         return from_git_repo(event, repo)
 
     from dogeaction.adapters.github import from_github
-    from actions_toolkit import core
-
-    core.info(f"from_github {event} {repo}")
 
     ctx = from_github(event)
-    core.info(f"ctx {ctx}")
     return ctx
