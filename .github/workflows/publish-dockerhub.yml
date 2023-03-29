@@ -14,6 +14,7 @@ on:
       - "main"
       - "develop"
     paths:
+      - ".github/workflows/publish-dockerhub.yml"
       - "Dockerfile"
       - "dogeaction/**"
       - "entrypoint.sh"
