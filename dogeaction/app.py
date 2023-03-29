@@ -28,6 +28,9 @@ from os import walk  # noqa
 
 
 def ls_path(pth: Path):
+    """
+    List the files in a directory.
+    """
     return next(walk(pth), (None, None, []))[2]
 
 
@@ -101,6 +104,8 @@ def ci(event: str = typer.Argument("push", help="The event name")):
     dogefile = WORKSPACE / name
     core.info(f"Using Dogefile: {dogefile}")
     try:
+        contents = ls_path(WORKSPACE)
+        core.info(f"Contents: {os.linesep.join(contents)}")
         deployment = _trigger(event, dogefile, repo=WORKSPACE)
         core.info(happy_message(deployment))
     except (MuchError, ValueError) as err:
