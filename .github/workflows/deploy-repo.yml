@@ -59,3 +59,4 @@ jobs:
             -v ${{ github.workspace }}:/github/workspace
             -e DOGEOPS_API_URL=${{ inputs.api_url }}
             -e DOGEOPS_API_KEY=${{ secrets.api_key }}
+            -e GITHUB_WORKSPACE=/github/workspace
