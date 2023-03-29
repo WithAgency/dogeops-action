@@ -37,7 +37,6 @@ jobs:
           echo "Dogefile: ${{ inputs.dogefile }}"
           echo "API URL: ${{ inputs.api_url }}"
           echo "GH Workspace: ${{ github.workspace }}"
-          echo "Workspace: ${{ inputs.workspace }}"
           echo "Tag: ${{ inputs.tag }}"
           echo "Working Directory: $(pwd)"
           echo "Files:"
@@ -56,4 +55,7 @@ jobs:
         with:
           image: modelw/dogeops-action:${{ inputs.tag }}
           run: poetry run doge ci
-          options: -v ${{ github.workspace }}:/github/workspace
+          options: |
+            -v ${{ github.workspace }}:/github/workspace
+            - e DOGEOPS_API_URL=${{ inputs.api_url }}
+            - e DOGEOPS_API_KEY=${{ secrets.api_key }}
