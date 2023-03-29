@@ -55,8 +55,4 @@ jobs:
         with:
           image: modelw/dogeops-action:${{ inputs.tag }}
           run: poetry run doge ci
-          options: |
-            -v ${{ github.workspace }}:/github/workspace
-            -e DOGEOPS_API_URL=${{ inputs.api_url }}
-            -e DOGEOPS_API_KEY=${{ secrets.api_key }}
-            -e GITHUB_WORKSPACE=/github/workspace
+          options: -v ${{ github.workspace }}:/github/workspace -e DOGEOPS_API_URL=${{ inputs.api_url }} -e DOGEOPS_API_KEY=${{ secrets.api_key }} -e GITHUB_WORKSPACE=/github/workspace
