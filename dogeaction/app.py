@@ -5,6 +5,7 @@ from typing import Optional
 
 import typer
 import yaml
+from actions_toolkit import core
 from httpx import HTTPError
 
 from dogeaction.adapters import make_context
@@ -13,8 +14,6 @@ from dogeaction.ascii import happy_message, sad_message
 from dogeaction.models import dogeops as dm
 from dogeaction.models.dogeops import Options
 
-BASE_DIR = Path(__file__).parent.parent
-WORKSPACE = Path(os.getenv("GITHUB_WORKSPACE", BASE_DIR))
 
 
 app = typer.Typer()
@@ -108,10 +107,13 @@ def ci(event: str = typer.Argument("push", help="The event name")):
     """
     from actions_toolkit import core
 
-    name = core.get_input("manifest") or "Dogefile"
-    dogefile = WORKSPACE / name
-    core.info(f"Using Dogefile: {dogefile}")
     try:
+        WORKSPACE = Path(os.environ["GITHUB_WORKSPACE"])
+
+        name = core.get_input("manifest") or "Dogefile"
+        dogefile = WORKSPACE / name
+        core.info(f"Using Dogefile: {dogefile}")
+
         ls_path(WORKSPACE)
         ls_path(Path("/github/home"))
         deployment = _trigger(event, dogefile, repo=WORKSPACE)

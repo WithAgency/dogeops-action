@@ -29,30 +29,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-      - name: Debug
-        run: |
-          echo "Dogefile: ${{ inputs.dogefile }}"
-          echo "API URL: ${{ inputs.api_url }}"
-          echo "GH Workspace: ${{ github.workspace }}"
-          echo "Tag: ${{ inputs.tag }}"
-          echo "Working Directory: $(pwd)"
-          echo "Files:"
-          ls -la ${{ github.workspace }}
-
-#      - name: Deploy to DogeOps
-#        uses: WithAgency/dogeops-action@develop
-#        env:
-#          DOGEOPS_API_URL: ${{ inputs.api_url }}
-#          DOGEOPS_API_KEY: ${{ secrets.api_key }}
-#        with:
-#          dogefile: ${{ inputs.dogefile }}
-
       - name: Deploy to DogeOps
-        uses: addnab/docker-run-action@v3
+        uses: WithAgency/dogeops-action@${{ inputs.tag }}
+        env:
+          DOGEOPS_API_URL: ${{ inputs.api_url }}
+          DOGEOPS_API_KEY: ${{ secrets.api_key }}
         with:
-          image: modelw/dogeops-action:${{ inputs.tag }}
-          run: poetry run doge ci
-          options: -v ${{ github.workspace }}:/github/workspace -e DOGEOPS_API_URL=${{ inputs.api_url }} -e DOGEOPS_API_KEY=${{ secrets.api_key }} -e GITHUB_WORKSPACE=/github/workspace
+          dogefile: ${{ inputs.dogefile }}

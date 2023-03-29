@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 set -e
 set -u
@@ -6,7 +6,9 @@ set -u
 
 echo "Current directory: $(pwd)"
 echo "Files in current directory: $(ls -la)"
-echo -e "Environment variables:\n$(env)"
+echo "::debug::Environment variables:"
+echo "::debug::$(env)"
+
 
 echo "Changing directory to /app"
 cd /app

@@ -46,6 +46,7 @@ class Organization:
     """
 
     name: str
+    id: Optional[str] = None
 
 
 @dataclass
@@ -54,8 +55,8 @@ class Context:
     repo: Repo
     author: Author
     commit: Commit
+    organization: Organization
     payload: Optional[Any] = field(default_factory=dict)
-    organization: Optional[Organization] = None
 
 
 @dataclass

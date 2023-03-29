@@ -8,18 +8,19 @@ RUN apk add --no-cache git \
 
 LABEL org.opencontainers.image.description="GitHub Action to manage and deploy an application Doge-style"
 
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod u+x /entrypoint.sh
-
 WORKDIR /app
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONHASHSEED=random \
-    PYTHONPATH=/app
-
 COPY poetry.lock pyproject.toml ./
 RUN mkdir dogeaction && touch dogeaction/__init__.py \
     && poetry config virtualenvs.in-project true --local \
     && poetry install --only main --no-ansi
+
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=random \
+    PYTHONPATH=/app
+
 
 #VOLUME ["${GITHUB_WORKSPACE:-/github/workspace/}"]
 #VOLUME ["/github/workspace/.git}"]

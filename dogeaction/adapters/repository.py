@@ -48,4 +48,7 @@ def from_git_repo(event: str, repo: Path) -> dm.Context:
             ref=ref.path,
         ),
         author=committer,
+        organization=dm.Organization(
+            name=urls.organization,
+        ),
     )

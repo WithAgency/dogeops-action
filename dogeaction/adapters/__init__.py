@@ -16,6 +16,13 @@ class GitUrls:
     http: str = None
     ssh: str = None
 
+    @property
+    def organization(self):
+        """
+        Get the organization name from the url.
+        """
+        return self.http.split("/")[-2]
+
     def __post_init__(self, url: str):
         """
         Parse the url and set the http and ssh urls.
@@ -56,7 +63,7 @@ def make_context(event: str, repo: Path) -> Context:
     When running in a GitHub Action, the context is built from the environment variables.
     When running locally, the context is built from the .git directory and properties.
     """
-    if (repo / ".git").exists():
+    if os.environ.get("GITHUB_ACTIONS") != "true":
         from dogeaction.adapters.repository import from_git_repo
         from actions_toolkit import core
         core.info(f"from_git_repo {event} {repo}")

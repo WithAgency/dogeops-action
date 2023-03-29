@@ -22,7 +22,7 @@ def get_author(ctx) -> dm.Author:
     payload = ctx.payload
 
     if event == "push":
-        user = payload["author"]
+        user = payload["pusher"]
         committer = dm.Author(
             name=user["name"],
             email=user["email"],
@@ -54,6 +54,7 @@ def get_organization(ctx) -> dm.Organization:
     if org := ctx.payload.get("organization"):
         organization = dm.Organization(
             name=org["login"],
+            id=str(org["id"]),
         )
     else:
         raise ValueError(
@@ -66,6 +67,8 @@ def get_organization(ctx) -> dm.Organization:
 def from_github(event: str) -> dm.Context:
     ctx = github.Context()
     payload = ctx.payload
+
+    core.info(f"from_github {event} {ctx} {payload}")
 
     repo = get_repo(ctx)
     author = get_author(ctx)
