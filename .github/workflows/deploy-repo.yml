@@ -18,7 +18,7 @@ on:
         type: string
       tag:
         description: 'Image tag'
-        default: "latest"
+        default: "main"
         type: string
     secrets:
       api_key:
