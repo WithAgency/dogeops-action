@@ -105,7 +105,7 @@ def ci(event: str = typer.Argument("push", help="The event name")):
     core.info(f"Using Dogefile: {dogefile}")
     try:
         contents = ls_path(WORKSPACE)
-        core.info(f"Contents: {os.linesep.join(contents)}")
+        core.info(f"Workspace contents:\n{os.linesep.join(contents)}")
         deployment = _trigger(event, dogefile, repo=WORKSPACE)
         core.info(happy_message(deployment))
     except (MuchError, ValueError) as err:

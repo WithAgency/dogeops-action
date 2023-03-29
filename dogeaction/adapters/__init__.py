@@ -61,5 +61,6 @@ def make_context(event: str, repo: str = None) -> Context:
     #     return from_github(event)
 
     from dogeaction.adapters.repository import from_git_repo
-
+    from actions_toolkit import core
+    core.info(f"from_git_repo {event} {repo}")
     return from_git_repo(event, repo)
