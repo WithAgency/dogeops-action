@@ -5,7 +5,6 @@ from typing import Optional
 
 import typer
 import yaml
-from actions_toolkit import core
 from httpx import HTTPError
 
 from dogeaction.adapters import make_context
@@ -89,8 +88,11 @@ def ci(event: str = typer.Argument("push", help="The event name")):
     """
     Trigger a deployment manually.
     """
+    from actions_toolkit import core
+
     name = core.get_input("manifest") or "Dogefile"
     dogefile = WORKSPACE / name
+    core.info(f"Using Dogefile: {dogefile}")
     try:
         deployment = _trigger(event, dogefile, repo=WORKSPACE)
         core.info(happy_message(deployment))
@@ -109,6 +111,7 @@ def deploy(
     Trigger a deployment manually.
     """
     dogefile = repo / name
+    typer.secho(f"Using Dogefile: {dogefile}", fg=typer.colors.BLUE)
     try:
         deployment = _trigger(event, dogefile, repo)
         typer.secho(happy_message(deployment), fg=typer.colors.GREEN)

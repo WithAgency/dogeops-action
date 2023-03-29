@@ -28,14 +28,14 @@ jobs:
 #      - name: Checkout
 #        uses: actions/checkout@v3
 #
-#      - name: Debug
-#        run: |
-#          echo "Dogefile: ${{ inputs.dogefile }}"
-#          echo "API URL: ${{ inputs.api_url }}"
-#          echo "Tag: ${{ inputs.tag }}"
-#          echo "API Key (masked right?): ${{ secrets.api_key }}"
-#          echo "Working Directory: $(pwd)"
-#          echo "Files: $(ls -la)"
+      - name: Debug
+        run: |
+          echo "Dogefile: ${{ inputs.dogefile }}"
+          echo "API URL: ${{ inputs.api_url }}"
+          echo "Tag: ${{ inputs.tag }}"
+          echo "Working Directory: $(pwd)"
+          echo "Files:"
+          ls -la
 
       - name: Deploy to DogeOps
         uses: WithAgency/dogeops-action@develop
