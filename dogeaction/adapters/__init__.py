@@ -1,6 +1,7 @@
 import os
 import re
 from dataclasses import InitVar, dataclass
+from pathlib import Path
 
 from dogeaction.models.dogeops import Context
 
@@ -49,18 +50,23 @@ class GitUrls:
         return f"git@{host}:{path}"
 
 
-def make_context(event: str, repo: str = None) -> Context:
+def make_context(event: str, repo: Path) -> Context:
     """
     Build a DogeOps context from the environment.
     When running in a GitHub Action, the context is built from the environment variables.
     When running locally, the context is built from the .git directory and properties.
     """
-    # if os.getenv("GITHUB_ACTIONS") == "true":
-    #     from dogeaction.adapters.github import from_github
-    #
-    #     return from_github(event)
+    if (repo / ".git").exists():
+        from dogeaction.adapters.repository import from_git_repo
+        from actions_toolkit import core
+        core.info(f"from_git_repo {event} {repo}")
+        return from_git_repo(event, repo)
 
-    from dogeaction.adapters.repository import from_git_repo
+    from dogeaction.adapters.github import from_github
     from actions_toolkit import core
-    core.info(f"from_git_repo {event} {repo}")
-    return from_git_repo(event, repo)
+
+    core.info(f"from_github {event} {repo}")
+
+    ctx = from_github(event)
+    core.info(f"ctx {ctx}")
+    return ctx

@@ -31,7 +31,15 @@ def ls_path(pth: Path):
     """
     List the files in a directory.
     """
-    return next(walk(pth), (None, None, []))[2]
+    from actions_toolkit import core
+    import subprocess
+
+    try:
+        out = subprocess.check_output(["ls", "-la", f"{pth}"])
+        # contents = next(walk(pth), (None, None, []))[2]
+        core.info(f"{pth} contents:\n{os.linesep.join(out.decode().splitlines())}")
+    except Exception as err:
+        core.info(f"Error listing {pth}: {err}")
 
 
 def upload_manifest(
@@ -104,8 +112,8 @@ def ci(event: str = typer.Argument("push", help="The event name")):
     dogefile = WORKSPACE / name
     core.info(f"Using Dogefile: {dogefile}")
     try:
-        contents = ls_path(WORKSPACE)
-        core.info(f"Workspace contents:\n{os.linesep.join(contents)}")
+        ls_path(WORKSPACE)
+        ls_path(Path("/github/home"))
         deployment = _trigger(event, dogefile, repo=WORKSPACE)
         core.info(happy_message(deployment))
     except (MuchError, ValueError) as err:

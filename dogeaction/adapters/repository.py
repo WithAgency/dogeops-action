@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from git import Repo
 
 from dogeaction.adapters import GitUrls
@@ -17,14 +19,17 @@ def get_origin_url(repo: Repo) -> GitUrls:
     return urls
 
 
-def from_git_repo(event: str, repo: str = None) -> dm.Context:
+def from_git_repo(event: str, repo: Path) -> dm.Context:
     """
     Build a DogeOps context from a Git repo. Without using github package or environment variables.
     from the .git directory and properties
     """
-    repo = Repo(repo or ".")
+    repo = Repo(repo)
     commit = repo.head.commit
     ref = repo.head.reference
+
+    from actions_toolkit import core
+    core.info(f"from_git_repo {event} {repo} {commit} {ref}")
 
     committer = dm.Author(commit.committer.name, commit.committer.email)
 
@@ -41,11 +46,6 @@ def from_git_repo(event: str, repo: str = None) -> dm.Context:
             sha=commit.hexsha,
             message=commit.message,
             ref=ref.path,
-            # branch=repo.refs.as_dict()[b"HEAD"].decode(),
-            # author=dm.Author(
-            #     name=repo.get_object(repo.head()).author.decode(),
-            #     email=repo.get_object(repo.head()).author.decode(),
-            # ),
         ),
         author=committer,
     )
