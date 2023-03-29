@@ -8,12 +8,18 @@ on:
     types: [ published ]
 
   # publish on pushes to the main branch (image tagged as "latest")
+  # publish on pushes to the develop branch (image tagged as "develop")
   push:
     branches:
       - "main"
       - "develop"
-#    paths:
-#      - "!.github/workflows/push-to-dockerhub.yaml"
+    paths:
+      - "Dockerfile"
+      - "dogeaction/**"
+      - "entrypoint.sh"
+      - "poetry.lock"
+      - "pyproject.toml"
+      - "README.md"
 
 jobs:
   docker_publish:
