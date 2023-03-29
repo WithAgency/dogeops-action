@@ -21,6 +21,8 @@ RUN mkdir dogeaction && touch dogeaction/__init__.py \
     && poetry config virtualenvs.in-project true --local \
     && poetry install --only main --no-ansi
 
+VOLUME ["${GITHUB_WORKSPACE:-/github/workspace}"]
+
 COPY . .
 
 ENTRYPOINT ["/entrypoint.sh"]
