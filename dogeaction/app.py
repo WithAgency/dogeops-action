@@ -24,6 +24,13 @@ class MuchError(Exception):
     pass
 
 
+from os import walk  # noqa
+
+
+def ls_path(pth: Path):
+    return next(walk(pth), (None, None, []))[2]
+
+
 def upload_manifest(
     dogefile: Path,
     ctx: dm.Context,

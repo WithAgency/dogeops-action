@@ -40,7 +40,7 @@ jobs:
           echo "Tag: ${{ inputs.tag }}"
           echo "Working Directory: $(pwd)"
           echo "Files:"
-          ls -la
+          ls -la ${{ github.workspace }}
 
 #      - name: Deploy to DogeOps
 #        uses: WithAgency/dogeops-action@develop
