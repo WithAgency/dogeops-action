@@ -32,6 +32,7 @@ jobs:
         run: |
           echo "Dogefile: ${{ inputs.dogefile }}"
           echo "API URL: ${{ inputs.api_url }}"
+          echo "Workspace: ${{ github.workspace }}"
           echo "Tag: ${{ inputs.tag }}"
           echo "Working Directory: $(pwd)"
           echo "Files:"
@@ -45,9 +46,9 @@ jobs:
         with:
           dogefile: ${{ inputs.dogefile }}
 
-#      - name: Deploy to DogeOps
-#        uses: addnab/docker-run-action@v3
-#        with:
-#          image: modelw/dogeops-action:${{ inputs.tag }}
-#          run: poetry run doge ci
-#          options: -v ${{ github.workspace }}:/github/workspace
+      - name: Deploy to DogeOps
+        uses: addnab/docker-run-action@v3
+        with:
+          image: modelw/dogeops-action:${{ inputs.tag }}
+          run: poetry run doge ci
+          options: -v ${{ github.workspace }}:/github/workspace
