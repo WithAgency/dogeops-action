@@ -29,6 +29,7 @@ def from_git_repo(event: str, repo: Path) -> dm.Context:
     ref = repo.head.reference
 
     from actions_toolkit import core
+
     core.info(f"from_git_repo {event} {repo} {commit} {ref}")
 
     committer = dm.Author(commit.committer.name, commit.committer.email)

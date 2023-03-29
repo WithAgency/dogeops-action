@@ -14,8 +14,6 @@ from dogeaction.ascii import happy_message, sad_message
 from dogeaction.models import dogeops as dm
 from dogeaction.models.dogeops import Options
 
-
-
 app = typer.Typer()
 
 
@@ -30,8 +28,9 @@ def ls_path(pth: Path):
     """
     List the files in a directory.
     """
-    from actions_toolkit import core
     import subprocess
+
+    from actions_toolkit import core
 
     try:
         out = subprocess.check_output(["ls", "-la", f"{pth}"])
