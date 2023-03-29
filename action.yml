@@ -6,9 +6,6 @@ inputs:
   dogefile:
     description: "Name of the Dogefile"
     default: "Dogefile"
-  tag:
-    description: "Tag to use for the image"
-    default: "latest"
 
 runs:
   using: "docker"
