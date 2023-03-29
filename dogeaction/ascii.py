@@ -59,11 +59,11 @@ CONCERNED_DOGE = """
 """
 
 
-def happy_message(dep: Optional[Deployment] = None) -> str:
+def happy_message(progress_url: str = None) -> str:
     message = f"""
 {DOGE_TO_THE_MOON}
 
-Progress: {f'{dep.progress_url}'}
+Progress: {f'{progress_url}'}
 """
     return message
 

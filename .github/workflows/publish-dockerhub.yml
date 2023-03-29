@@ -4,23 +4,23 @@ name: Build and publish to Docker Hub
 on:
   workflow_dispatch:
   # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
-  release:
-    types: [ published ]
+#  release:
+#    types: [ published ]
 
   # publish on pushes to the main branch (image tagged as "latest")
   # publish on pushes to the develop branch (image tagged as "develop")
-  push:
-    branches:
-      - "main"
-      - "develop"
-    paths:
-      - ".github/workflows/publish-dockerhub.yml"
-      - "Dockerfile"
-      - "dogeaction/**"
-      - "entrypoint.sh"
-      - "poetry.lock"
-      - "pyproject.toml"
-      - "README.md"
+#  push:
+#    branches:
+#      - "main"
+#      - "develop"
+#    paths:
+#      - ".github/workflows/publish-dockerhub.yml"
+#      - "Dockerfile"
+#      - "dogeaction/**"
+#      - "entrypoint.sh"
+#      - "poetry.lock"
+#      - "pyproject.toml"
+#      - "README.md"
 
 jobs:
   docker_publish:

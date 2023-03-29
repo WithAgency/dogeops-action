@@ -114,10 +114,10 @@ def ci(event: str = typer.Argument("push", help="The event name")):
         dogefile = WORKSPACE / name
         core.info(f"Using Dogefile: {dogefile}")
 
-        ls_path(WORKSPACE)
-        ls_path(Path("/github/home"))
-        deployment = _trigger(event, dogefile, repo=WORKSPACE)
-        core.info(happy_message(deployment))
+        if deployment := _trigger(event, dogefile, repo=WORKSPACE):
+            core.info(happy_message(deployment.progress_url))
+        else:
+            core.info("This commit was ignored")
     except (MuchError, ValueError) as err:
         core.set_failed(f"{err.args[0]}")
         core.info(sad_message())
@@ -135,11 +135,13 @@ def deploy(
     dogefile = repo / name
     typer.secho(f"Using Dogefile: {dogefile}", fg=typer.colors.BLUE)
     try:
-        deployment = _trigger(event, dogefile, repo)
-        typer.secho(happy_message(deployment), fg=typer.colors.GREEN)
+        if deployment := _trigger(event, dogefile, repo):
+            typer.secho(happy_message(deployment.progress_url), fg=typer.colors.GREEN)
+        else:
+            typer.secho("This commit was ignored", fg=typer.colors.YELLOW)
     except (MuchError, ValueError) as err:
         typer.secho(sad_message(), fg=typer.colors.RED)
-        typer.secho(f"{err.args[0]}", fg=typer.colors.RED)
+        typer.secho(f"Error: {err.args[0]}", fg=typer.colors.RED)
         return 1
 
 
