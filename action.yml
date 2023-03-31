@@ -13,5 +13,5 @@ runs:
 #  image: 'docker://modelw/dogeops-action:develop'
   using: "composite"
   steps:
-    - run: doge deploy .
+    - run: ./doge deploy .
       shell: bash
