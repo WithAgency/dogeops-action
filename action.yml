@@ -13,5 +13,7 @@ runs:
 #  image: 'docker://modelw/dogeops-action:develop'
   using: "composite"
   steps:
+    - run: echo "Debug $(pwd) $(ls -la)" >> $GITHUB_OUTPUT
+      shell: bash
     - run: ./doge deploy .
       shell: bash
