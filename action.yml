@@ -8,6 +8,10 @@ inputs:
     default: "Dogefile"
 
 runs:
-  using: "docker"
-  image: "Dockerfile"
+#  using: "docker"
+#  image: "Dockerfile"
 #  image: 'docker://modelw/dogeops-action:develop'
+  using: "composite"
+  steps:
+    - run: doge deploy .
+      shell: bash

@@ -115,11 +115,15 @@ def ci(event: str = typer.Argument("push", help="The event name")):
 
         if deployment := _trigger(event, dogefile, repo=WORKSPACE):
             core.info(happy_message(deployment.progress_url))
+            return
         else:
             core.info("This commit was ignored")
     except (MuchError, ValueError) as err:
         core.set_failed(f"{err.args[0]}")
-        core.info(sad_message())
+    except KeyError as err:
+        core.set_failed(f"Environment variable not set: {err.args[0]}")
+
+    core.info(sad_message())
 
 
 @app.command(help="Trigger a DogeOps deployment (marked as 'manual')")
