@@ -32,21 +32,18 @@ runs:
     - name: "git log"
       shell: bash
       run: |
-        git config --global user.email "dogeops@gha.com"
-        git config --global user.name "DogeOps"
-
         repo="$(basename $(git rev-parse --show-toplevel))"
         branch="$(git rev-parse --abbrev-ref HEAD)"
         sha="$(git rev-parse HEAD)"
         # show the author (sed is there to strip the timestamp)
-        author="$(git var GIT_AUTHOR_IDENT | sed -r 's/( [^ ]+){2}$//')"
+        committer_email="$(git log -1 --pretty=format:'%ae')"
         # and the committer
-        commiter="$(git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//')"
+        commiter_name="$(git log -1 --pretty=format:'%an')"
         message="$(git log -1 --pretty=%B)"
 
         echo "repo $repo"
         echo "branch $branch"
         echo "sha $sha"
-        echo "author $author"
-        echo "commiter $commiter"
+        echo "committer_email committer_email"
+        echo "commiter_name $commiter_name"
         echo "message $message"
