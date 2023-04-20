@@ -25,6 +25,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "Using action version ${{ inputs.tag }}"
       - name: Deploy to DogeOps
         uses: WithAgency/dogeops-action@${{ inputs.tag }}
         env:

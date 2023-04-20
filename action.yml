@@ -23,15 +23,18 @@ runs:
     - name: "git status"
       shell: bash
       run: |
+        repo="$(basename $(git rev-parse --show-toplevel))"
+        branch="$(git rev-parse --abbrev-ref HEAD)"
+        sha="$(git rev-parse HEAD)"
         # show the author (sed is there to strip the timestamp)
         author="$(git var GIT_AUTHOR_IDENT | sed -r 's/( [^ ]+){2}$//')"
         # and the committer
         commiter="$(git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//')"
         message="$(git log -1 --pretty=%B)"
 
-        echo "repo $(basename $(git rev-parse --show-toplevel))"
-        echo "branch $(git rev-parse --abbrev-ref HEAD)"
-        echo "sha $(git rev-parse HEAD)"
+        echo "repo $repo"
+        echo "branch $branch"
+        echo "sha $sha"
         echo "author $author"
         echo "commiter $commiter"
         echo "message $message"
