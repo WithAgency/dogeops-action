@@ -6,6 +6,14 @@ inputs:
   dogefile:
     description: "Name of the Dogefile"
     default: "Dogefile"
+  api_url:
+    description: "URL of the DogeOps API"
+    required: true
+
+secrets:
+  DOGEOPS_API_KEY:
+    description: "API key to authenticate with DogeOps"
+    required: true
 
 runs:
 #  using: "docker"
@@ -17,10 +25,11 @@ runs:
       shell: bash
       run: |
         echo "dogeops-action $(pwd)"
-    - name: "git branches"
-      shell: bash
-      run: git branch -a
     - name: "git status"
+      shell: bash
+      run: |
+        git status
+    - name: "git log"
       shell: bash
       run: |
         repo="$(basename $(git rev-parse --show-toplevel))"
