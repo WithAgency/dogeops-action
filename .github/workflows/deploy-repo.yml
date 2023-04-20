@@ -4,10 +4,6 @@ name: Deploy Repository to DogeOps
 on:
   workflow_call:
     inputs:
-#      workspace:
-#        description: 'Workspace'
-#        required: true
-#        type: string
       dogefile:
         description: 'Dogefile name'
         default: 'Dogefile'
