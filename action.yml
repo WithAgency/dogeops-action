@@ -32,6 +32,9 @@ runs:
     - name: "git log"
       shell: bash
       run: |
+        git config --global user.email "dogeops@gha.com"
+        git config --global user.name "DogeOps"
+
         repo="$(basename $(git rev-parse --show-toplevel))"
         branch="$(git rev-parse --abbrev-ref HEAD)"
         sha="$(git rev-parse HEAD)"
