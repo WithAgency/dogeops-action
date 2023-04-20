@@ -44,6 +44,6 @@ runs:
         echo "repo $repo"
         echo "branch $branch"
         echo "sha $sha"
-        echo "committer_email committer_email"
+        echo "committer_email $committer_email"
         echo "commiter_name $commiter_name"
         echo "message $message"
