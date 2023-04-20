@@ -13,9 +13,10 @@ runs:
 #  image: 'docker://modelw/dogeops-action:develop'
   using: "composite"
   steps:
-    - name: "pwd and ls"
+    - name: "pwd"
       shell: bash
-      run: echo "Debug $(pwd) $(ls -la)"
+      run: |
+        echo "dogeops-action $(pwd)"
     - name: "git branches"
       shell: bash
       run: git branch -a
