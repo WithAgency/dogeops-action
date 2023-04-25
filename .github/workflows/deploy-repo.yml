@@ -12,10 +12,6 @@ on:
         description: 'DogeOps API URL'
         required: true
         type: string
-      tag:
-        description: 'Image tag'
-        default: "main"
-        type: string
     secrets:
       api_key:
         description: 'DogeOps API Token'
@@ -25,13 +21,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Using action version ${{ inputs.tag }}"
+      - run: echo "Using action version develop"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Deploy to DogeOps
-        uses: WithAgency/dogeops-action@${{ inputs.tag }}
+        uses: WithAgency/dogeops-action@$develop
         env:
           DOGEOPS_API_URL: ${{ inputs.api_url }}
         secrets:
