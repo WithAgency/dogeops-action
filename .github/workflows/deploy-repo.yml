@@ -30,6 +30,7 @@ jobs:
         uses: WithAgency/dogeops-action@${{ inputs.tag }}
         env:
           DOGEOPS_API_URL: ${{ inputs.api_url }}
+        secrets:
           DOGEOPS_API_KEY: ${{ secrets.api_key }}
         with:
           dogefile: ${{ inputs.dogefile }}
