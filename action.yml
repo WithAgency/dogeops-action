@@ -18,6 +18,11 @@ secrets:
 runs:
   using: "composite"
   steps:
+    - name: "Debug"
+      shell: bash
+      run: |
+        pwd
+        ls -la
     - shell: bash
       run: |
         DOGEOPS_API_KEY=${{ secrets.DOGEOPS_API_KEY }} \
