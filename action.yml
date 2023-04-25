@@ -25,5 +25,6 @@ runs:
         ls -la
     - shell: bash
       run: |
+        DOGEOPS_API_URL=${{ inputs.api_url }} \
         DOGEOPS_API_KEY=${{ secrets.DOGEOPS_API_KEY }} \
         ./doge.sh -v -f ${{ inputs.dogefile }}
