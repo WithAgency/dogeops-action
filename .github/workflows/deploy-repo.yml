@@ -26,6 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Using action version ${{ inputs.tag }}"
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Deploy to DogeOps
         uses: WithAgency/dogeops-action@${{ inputs.tag }}
         env:
