@@ -20,6 +20,6 @@ runs:
   steps:
     - shell: bash
       run: |
-        DOGEOPS_API_URL=${{ vars.DOGEOPS_API_URL }} \
+#        DOGEOPS_API_URL=${{ vars.DOGEOPS_API_URL }} \
         DOGEOPS_API_KEY=${{ secrets.DOGEOPS_API_KEY }} \
         ./doge.sh -v -f ${{ inputs.dogefile }}
