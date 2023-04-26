@@ -52,7 +52,7 @@ DOGE_TO_THE_MOON="
 ⠐⠺⠿⠿⠿⠿⠟⠛⠋⠁⠀⠀⠀⠀⠐⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 "
 
-source "$DOGE_DIR"/_logging.sh
+source "$SCRIPT_DIR/_logging.sh"
 
 # Doge message for failure
 function fail_message {

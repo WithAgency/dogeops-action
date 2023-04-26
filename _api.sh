@@ -19,7 +19,7 @@ function make_body {
     local options="$2"
     local dogefile="$3"
 
-    echo "{\"context\": ${context}, \"options\": ${options}, \"dogefile\": ${dogefile}}"
+    printf '{"context": %s, "options": %s, "dogefile": %s}' "$context" "$options" "$dogefile"
 }
 
 function make_request {
@@ -30,21 +30,16 @@ function make_request {
     local response
     verbose "Request: $method $url"
 
-    # escape newlines and convert to compact json
-    data="$(echo "$data" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g' | jq -c .)"
-    verbose "Data: $data"
     # http_code will be the last line of the response
     response=$(curl --write-out "\n%{http_code}\n" --silent --data "$data" -X "$method" --header "$auth" --header "Content-Type: application/json" "$url")
-    local status=$?
-    verbose "Status: $status"
 
     local http_code
     # get the code from the last line
     http_code="$(echo "$response" | tail -n1)"
-    verbose "HTTP Code: $http_code"
     # remove the last line
     response=$(echo "$response" | head -n-1)
-    verbose "Response: $response"
+
+    verbose "Status code: $http_code"
 
     echo "$response"
     return "$http_code"
@@ -62,8 +57,9 @@ function post_request {
 
     verbose "Making POST request to $url"
     verbose "Path: $path"
+    verbose "Data: $data"
 
-    response=$(make_request "${url}${path}" "POST" "$data" "$auth")
+    response="$(make_request "${url}${path}" "POST" "$data" "$auth")"
     status=$?
     echo "$response"
     return "$status"

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-source "$(dirname "$0")/_github.sh"
-source "$(dirname "$0")/_context.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+source "$SCRIPT_DIR/_github.sh"
+source "$SCRIPT_DIR/_context.sh"
 
 function set_shell_options {
     # More safety, by turning some bugs into errors.
@@ -16,11 +18,9 @@ function set_shell_options {
     # -use return value from ${PIPESTATUS[0]}, because ! hosed $?
     ! getopt --test >/dev/null
     if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-        echo '`getopt --test` failed in this environment.'
-        exit 1
+        die 1 '`getopt --test` failed in this environment.'
     fi
 }
-
 
 # Print usage information
 function usage {
@@ -33,7 +33,7 @@ function usage {
 }
 
 # defaults
-dogefile="$(github_input "Dogefile" "Dogefile")"
+dogefile="Dogefile"
 event=${GITHUB_EVENT_NAME:-"push"}
 repo="."
 verbose=n
@@ -44,14 +44,14 @@ function parse_input_args {
     # option --event/-e requires 1 argument
     # option --repo/-r requires 1 argument
     # option --verbose/-v requires 0 arguments
-    LONGOPTS=dogefile:,event:,repo:,verbose
+    LONG_OPTS=dogefile:,event:,repo:,verbose
     OPTIONS=d:e:r:v
 
     # -regarding ! and PIPESTATUS see above
     # -temporarily store output to be able to check for errors
     # -activate quoting/enhanced mode (e.g. by writing out “--options”)
     # -pass arguments only via   -- "$@"   to separate them correctly
-    ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+    ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONG_OPTS --name "$0" -- "$@")
     if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
         # e.g. return value is 1
         #  then getopt has complained about wrong arguments to stdout
@@ -96,7 +96,10 @@ function parse_input_args {
 }
 parse_input_args "$@"
 
-source "$(dirname "$0")/_logging.sh"
+source "$SCRIPT_DIR/_logging.sh"
+verbose "Verbose mode on"
+
+dogefile="$(github_input "Dogefile" "$dogefile")"
 
 # resolve paths
 repo="$(realpath -e "$repo")"
@@ -104,17 +107,17 @@ repo="$(realpath -e "$repo")"
 if [[ ! -d "$repo/.git" ]]; then
     die 1 "Not a git repository: $repo"
 fi
+
 dogefile="$(realpath -e "$dogefile")"
 # check if dogefile exists
 if [[ ! -f "$dogefile" ]]; then
     die 1 "Dogefile not found: $dogefile"
 fi
 
-source "$(dirname "$0")/_api.sh"
-source "$(dirname "$0")/_outcome.sh"
+source "$SCRIPT_DIR/_api.sh"
+source "$SCRIPT_DIR/_outcome.sh"
 
 # Now do something with the options
-verbose "Verbose mode on"
 verbose "Dogefile: $dogefile"
 verbose "Event: $event"
 verbose "Repo: $repo"
@@ -162,17 +165,20 @@ if [ "$0" = "${BASH_SOURCE[0]}" ]; then
 
     auth="$(make_auth)"
 
+    cd "$repo" || die 1 "Could not cd to $repo"
     body=$(main)
+    cd - >/dev/null || die 1 "Could not cd back to $OLDPWD"
+
     response=$(post_request "$body" "$auth")
     status=$?
     # if there was an http error >256, the status code will overflow the
     # 8-bit integer of the return type, so we need to add 256 to get the
     # actual status code
-    # if the status code is 201, it fits in the 8-bit integer
-    if [[ $status -lt 200 || $status -ge 201 ]]; then
+    # if the status code is 200/201, it fits in the 8-bit integer
+    if [[ $status -lt 200 || $status -gt 201 ]]; then
         fail_message
         # add 256 to status code to get the exit code
         die 2 "Request failed with code $((status + 256))"
     fi
-    success_message "$(echo "$response" | jq -r .progress_url)"
+    success_message "$(jq -r .progress_url <<<"$response")"
 fi

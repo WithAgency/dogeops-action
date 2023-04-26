@@ -10,7 +10,7 @@ COLORS[gray]="\e[38;5;240m"
 
 # exit the program with an error message
 function die {
-    local exit_code="${1:1}"
+    local exit_code="${1:-1}"
     shift
     err "$@" >&2
     exit "$exit_code"
