@@ -27,4 +27,4 @@ runs:
       run: |
         DOGEOPS_API_URL=${{ inputs.api_url }} \
         DOGEOPS_API_KEY=${{ secrets.DOGEOPS_API_KEY }} \
-        ./doge.sh -v -f ${{ inputs.dogefile }}
+        "${GITHUB_ACTION_PATH}"/doge.sh -v -f ${{ inputs.dogefile }}
