@@ -9,9 +9,7 @@ inputs:
   api_url:
     description: "URL of the DogeOps API"
     required: true
-
-secrets:
-  DOGEOPS_API_KEY:
+  api_key:
     description: "API key to authenticate with DogeOps"
     required: true
 
@@ -21,10 +19,15 @@ runs:
     - name: "Debug"
       shell: bash
       run: |
+        echo "::group::Debug"
         pwd
         ls -la
+        echo "::endgroup::"
+        echo "::group::Env"
+        env
+        echo "::endgroup::"
     - shell: bash
       run: |
         DOGEOPS_API_URL=${{ inputs.api_url }} \
-        DOGEOPS_API_KEY=${{ secrets.DOGEOPS_API_KEY }} \
+        DOGEOPS_API_KEY=${{ inputs.api_key }} \
         "${GITHUB_ACTION_PATH}"/doge.sh -v -f ${{ inputs.dogefile }}
