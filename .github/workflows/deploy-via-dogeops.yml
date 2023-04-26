@@ -12,10 +12,10 @@ on:
         description: 'DogeOps API URL'
         required: true
         type: string
-    secrets:
       api_key:
-        description: 'DogeOps API Token'
+        description: 'DogeOps API Key'
         required: true
+        type: string
 
 jobs:
   deploy:
@@ -31,6 +31,6 @@ jobs:
         env:
           DOGEOPS_API_URL: ${{ inputs.api_url }}
         secrets:
-          DOGEOPS_API_KEY: ${{ secrets.api_key }}
         with:
+          api_key: ${{ inputs.api_key }}
           dogefile: ${{ inputs.dogefile }}
