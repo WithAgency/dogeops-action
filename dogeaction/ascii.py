@@ -1,7 +1,6 @@
 from typing import Optional
 from urllib.parse import urljoin
 
-from dogeaction.api import API_URL
 from dogeaction.models.dogeops import Deployment
 
 DOGE_TO_THE_MOON = """
@@ -63,7 +62,8 @@ def happy_message(progress_url: str = None) -> str:
     message = f"""
 {DOGE_TO_THE_MOON}
 
-Progress: {f'{progress_url}'}
+Such success! Much deploy! Wow!
+View progress at: {f'{progress_url}'}
 """
     return message
 
@@ -71,6 +71,8 @@ Progress: {f'{progress_url}'}
 def sad_message() -> str:
     message = f"""
 {CONCERNED_DOGE}
+
+Such failure! Much sad! Wow!
 """
 
     return message

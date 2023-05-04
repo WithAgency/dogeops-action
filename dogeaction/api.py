@@ -4,23 +4,13 @@ from typing import Any, Optional
 from typefit import api
 from typefit.httpx_models import HeaderTypes
 
-from dogeaction.models.dogeops import (
-    Context,
-    Deployment,
-    DeploymentRequest,
-    Options,
-    Project,
-)
-
-API_URL = os.environ["DOGEOPS_API_URL"]
+from dogeaction.models.dogeops import Context, Deployment, DeploymentRequest, Options
 
 
 class DogeApi(api.SyncClient):
-
-    BASE_URL = API_URL
-
-    def __init__(self, token: str):
+    def __init__(self, token: str, url: str):
         super().__init__()
+        self.BASE_URL = url
         self._token = token
 
     def headers(self) -> Optional[HeaderTypes]:

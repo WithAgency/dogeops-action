@@ -1,0 +1,33 @@
+---
+name: Deploy via DogeOps
+
+on:
+  workflow_call:
+    inputs:
+      dogefile:
+        description: 'Dogefile name'
+        default: 'Dogefile'
+        type: string
+      api_url:
+        description: 'DogeOps API URL'
+        required: true
+        type: string
+      api_key:
+        description: 'DogeOps API Key'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Deploy to DogeOps
+        uses: WithAgency/dogeops-action@v1
+        with:
+          dogefile: ${{ inputs.dogefile }}
+          api_url: ${{ inputs.api_url }}
+          api_key: ${{ inputs.api_key }}

@@ -1,13 +1,23 @@
 name: "DogeOps to the mooooooooon 🚀"
 author: "Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"
-description: "Upload a Dogefile yaml manifest to a DogeOps endpoint."
+description: "Request the deployment of this repository via DogeOps"
 
 inputs:
   dogefile:
     description: "Name of the Dogefile"
     default: "Dogefile"
+  api_url:
+    description: "URL of the DogeOps API"
+    required: true
+  api_key:
+    description: "API key to authenticate with DogeOps"
+    required: true
 
 runs:
-  using: "docker"
-  image: "Dockerfile"
-#  image: 'docker://modelw/dogeops-action:develop'
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        DOGEOPS_API_URL=${{ inputs.api_url }} \
+        DOGEOPS_API_KEY=${{ inputs.api_key }} \
+        "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}

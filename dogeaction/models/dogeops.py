@@ -11,9 +11,6 @@ class Repo:
     Represents a git repository.
     """
 
-    repo: str
-    # owner: str
-    ref: str
     url: str
 
 
@@ -52,17 +49,20 @@ class Organization:
 @dataclass
 class Context:
     event: str
-    repo: Repo
+    repo: str
     author: Author
     commit: Commit
-    organization: Organization
     payload: Optional[Any] = field(default_factory=dict)
 
 
 @dataclass
 class Options:
-    ignore: bool = False
-    notify: bool = True
+    command: Optional[str] = None
+    kwargs: Optional[dict[str, Any]] = field(default_factory=dict)
+
+    def __post_init__(self):
+        if not self.command and self.kwargs:
+            raise ValueError("Cannot specify kwargs without command")
 
 
 @dataclass
