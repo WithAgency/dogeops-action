@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: Deploy to DogeOps
-        uses: WithAgency/dogeops-action@$develop
+        uses: WithAgency/dogeops-action@v1
         with:
           dogefile: ${{ inputs.dogefile }}
           api_url: ${{ inputs.api_url }}
