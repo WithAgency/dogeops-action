@@ -10,7 +10,7 @@ python = "~3.10"
 typefit = "^0.4.0"
 actions-toolkit = "^0.1.13"
 PyYAML = "^6.0"
-typer = {extras = ["all"], version = "^0.7.0"}
+typer = {extras = ["all"], version = "^0.9.0"}
 gitpython = "^3.1.31"
 
 [tool.poetry.group.dev.dependencies]
