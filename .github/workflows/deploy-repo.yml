@@ -1,5 +1,5 @@
 ---
-name: Deploy Repository to DogeOps
+name: Deploy via DogeOps
 
 on:
   workflow_call:

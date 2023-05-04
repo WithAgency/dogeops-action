@@ -1,6 +1,6 @@
 name: "DogeOps to the mooooooooon 🚀"
 author: "Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"
-description: "Upload a Dogefile yaml manifest to a DogeOps endpoint."
+description: "Request the deployment of this repository via DogeOps"
 
 inputs:
   dogefile:
@@ -16,16 +16,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: "Debug"
-      shell: bash
-      run: |
-        echo "::group::Debug"
-        pwd
-        ls -la
-        echo "::endgroup::"
-        echo "::group::Env"
-        env
-        echo "::endgroup::"
     - shell: bash
       run: |
         DOGEOPS_API_URL=${{ inputs.api_url }} \

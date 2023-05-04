@@ -1,5 +1,5 @@
 ---
-name: Deploy Repository to DogeOps
+name: Deploy via DogeOps
 
 on:
   workflow_call:
@@ -27,8 +27,7 @@ jobs:
 
       - name: Deploy to DogeOps
         uses: WithAgency/dogeops-action@$develop
-        env:
-          DOGEOPS_API_URL: ${{ inputs.api_url }}
         with:
-          api_key: ${{ inputs.api_key }}
           dogefile: ${{ inputs.dogefile }}
+          api_url: ${{ inputs.api_url }}
+          api_key: ${{ inputs.api_key }}
