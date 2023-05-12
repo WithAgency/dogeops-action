@@ -146,17 +146,19 @@ function main {
     # commit
     message="$(git log -1 --pretty=%B)"
     # payload (optional)
-    payload="${GITHUB_PAYLOAD:-null}"
+    payload="{}"
+    if [ ! -z "$GITHUB_EVENT_PATH" ]; then
+        payload="$(cat "${GITHUB_EVENT_PATH}")"
+    fi
 
     event="$event"
     author="$(make_author "$committer_name" "$committer_email")"
     commit="$(make_commit "$branch" "$sha" "$message")"
     dogefile="$(get_dogefile "$dogefile")"
-    options="$(parse_doge_options "$message")"
 
     context="$(make_context "$event" "$repo_url" "$author" "$commit" "$payload")"
 
-    make_body "$context" "$options" "$dogefile"
+    make_body "$context" "$dogefile"
 }
 
 # run main if this script is being run directly, not sourced
