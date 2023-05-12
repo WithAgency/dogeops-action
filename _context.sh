@@ -3,9 +3,14 @@
 source "$SCRIPT_DIR/_logging.sh"
 
 function multiline_json {
-    # remove newlines and spaces
     local data
-    data="$(sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\\\n/g' <<<"$1")"
+    data="$1"
+
+    # remove newlines
+    data="$(sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\\\n/g' <<<"$data")"
+
+    # escape double quotes
+    data="$(perl -pe 's/(?<!\\)"/\\\"/g' <<<"$data")"
 
     verbose "Multiline JSON: $data"
     printf '%s' "$data"

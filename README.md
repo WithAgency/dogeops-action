@@ -63,12 +63,3 @@ The API key for the project. It should be configured as a GitHub Secret and
 passed on to the jobs.
 Each project has its own API key, on each DogeOps instance. If you switch instances,
 it's more than likely that you'll need to change the API key, too.
-
-## Commands
-
-You may ask DogeOps to perform the following actions, by writing one of the following strings in the commit comment:
-Doge Commands follow this regex: r"^# +doge: (?P<command>\w+)(?: (?P<args>.*))?$
-
-Commands:
-- `ignore`: ignore this commit. DogeOps will still be called, but will not deploy anything and will mark the Deployment as 'canceled'.
-- `quiet`: don't notify the default communication channels (Slack, Discord, etc.)

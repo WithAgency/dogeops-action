@@ -16,10 +16,9 @@ function make_auth {
 
 function make_body {
     local context="$1"
-    local options="$2"
-    local dogefile="$3"
+    local dogefile="$2"
 
-    printf '{"context": %s, "options": %s, "dogefile": %s}' "$context" "$options" "$dogefile"
+    printf '{"context": %s, "dogefile": %s}' "$context" "$dogefile"
 }
 
 function make_request {
