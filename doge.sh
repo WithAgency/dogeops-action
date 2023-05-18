@@ -147,8 +147,12 @@ function main {
     message="$(git log -1 --pretty=%B)"
     # payload (optional)
     payload="{}"
-    if [ ! -z "$GITHUB_EVENT_PATH" ]; then
-        payload="$(cat "${GITHUB_EVENT_PATH}")"
+    if [ ! -z "${GITHUB_EVENT_PATH:-}" ]; then
+        verbose "Using GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH"
+        payload="$(jq -c -r . "${GITHUB_EVENT_PATH}")"
+        verbose "Payload: $payload"
+    else
+        verbose "GITHUB_EVENT_PATH not set, using empty payload"
     fi
 
     event="$event"

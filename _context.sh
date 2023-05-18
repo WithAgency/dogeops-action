@@ -56,7 +56,7 @@ function make_context {
     local repo="$2"
     local author="$3"
     local commit="$4"
-    local payload="${6:-null}"
+    local payload="${5:-null}"
 
     printf '{"event": "%s", "repo": "%s", "commit": %s, "author": %s, "payload": %s}' "$event" "$repo" "$commit" "$author" "$payload"
 }
