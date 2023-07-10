@@ -7,7 +7,7 @@ authors = ["Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"]
 
 [tool.poetry.dependencies]
 python = "~3.10"
-typefit = "^0.4.0"
+typefit = "^0.5.4"
 actions-toolkit = "^0.1.13"
 PyYAML = "^6.0"
 typer = {extras = ["all"], version = "^0.7.0"}
