@@ -1,29 +1,41 @@
-const { Command } = require("commander"); // add this line
-const figlet = require("figlet");
+import path from "path";
+import * as core from '@actions/core'
 
-const program = new Command();
-
-console.log(figlet.textSync("DogeOps Action"));
-
-/**
- * Retrieve the version of the package from the package.json file
- */
-function getPackageVersion() {
-  const packageJson = require("../package.json");
-  return packageJson.version;
+interface Args {
+    api_url: string,
+    api_key: string,
+    dogefile: string,
+    event: string,
+    repo: string,
+    ref: string,
+    verbose: boolean,
 }
 
-program
-    .version(getPackageVersion())
-    .description("A CLI to start a DogeOps deployment")
-    .option("-d, --dogefile <path>", "Path to the Dogefile to use")
-    .option("-e, --event <name>", "Name of the event that triggered the deployment")
-    .option("-r, --repo <path>", "Path to the repository to deploy")
-    .option("-f, --ref <ref>", "Git ref to deploy")
-    .option("-v, --verbose", "Verbose output")
-    .parse(process.argv);
+function getArgs(): Args {
+    const args = {
+        api_url: core.getInput('api_url'),
+        api_key: core.getInput('api_key'),
+        dogefile: core.getInput('dogefile'),
+        event: core.getInput('event_name'),
+        repo: core.getInput('repo') ?? process.env.GITHUB_WORKSPACE,
+        ref: core.getInput('ref') ?? process.env.GITHUB_REF,
+        verbose: core.getInput('verbose') === 'true' ?? false,
+    }
 
+    if (args.repo) {
+        args.repo = path.resolve(args.repo);
+    }
 
-const options = program.opts();
+    args.dogefile = path.resolve(args.repo, args.dogefile);
 
+    return args;
+}
 
+const args: Args = getArgs();
+
+async function run(args: Args) {
+    return args;
+}
+
+const res = await run(args);
+console.log(res);
