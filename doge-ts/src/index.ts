@@ -38,7 +38,7 @@ async function run(args: Args) {
 }
 
 run(args).then(res => {
-    core.info(`${res}`);
+    core.info(JSON.stringify(res));
 }).catch(err => {
     core.error(err);
     process.exit(1);
