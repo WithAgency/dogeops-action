@@ -50,7 +50,7 @@ function getArgs() {
         api_url: core.getInput('api_url'),
         api_key: core.getInput('api_key'),
         dogefile: core.getInput('dogefile'),
-        event: core.getInput('event_name'),
+        event: core.getInput('EVENT_NAME'),
         repo: (_a = core.getInput('repo')) !== null && _a !== void 0 ? _a : process.env.GITHUB_WORKSPACE,
         ref: (_b = core.getInput('ref')) !== null && _b !== void 0 ? _b : process.env.GITHUB_REF,
         verbose: (_c = core.getInput('verbose') === 'true') !== null && _c !== void 0 ? _c : false,
@@ -68,7 +68,7 @@ function run(args) {
     });
 }
 run(args).then(res => {
-    core.info(`${res}`);
+    core.info(JSON.stringify(res));
 }).catch(err => {
     core.error(err);
     process.exit(1);

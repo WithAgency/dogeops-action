@@ -16,7 +16,7 @@ function getArgs(): Args {
         api_url: core.getInput('api_url'),
         api_key: core.getInput('api_key'),
         dogefile: core.getInput('dogefile'),
-        event: core.getInput('event_name'),
+        event: core.getInput('EVENT_NAME'),
         repo: core.getInput('repo') ?? process.env.GITHUB_WORKSPACE,
         ref: core.getInput('ref') ?? process.env.GITHUB_REF,
         verbose: core.getInput('verbose') === 'true' ?? false,
