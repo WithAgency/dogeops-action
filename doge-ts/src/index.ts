@@ -19,9 +19,9 @@ function getArgs(): Args {
         api_url: core.getInput('api_url'),
         api_key: core.getInput('api_key'),
         dogefile: core.getInput('dogefile') || "Dogefile",
-        event: github.context.eventName,
+        event: process.env.GITHUB_EVENT_NAME || "",
         repo: core.getInput("repo") || process.env.GITHUB_WORKSPACE || process.cwd(),
-        ref: core.getInput('ref') || process.env.GITHUB_REF || "",
+        ref: core.getInput('ref') || process.env.GITHUB_REF_NAME || "",
         verbose: core.getInput('verbose') === "true" || false,
     }
 
