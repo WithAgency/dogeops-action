@@ -2,15 +2,17 @@ name: "DogeOps to the mooooooooon 🚀"
 author: "Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"
 description: "Request the deployment of this repository via DogeOps"
 
+secrets:
+  api_key:
+    description: "API key to authenticate with DogeOps"
+    required: true
+
 inputs:
   dogefile:
     description: "Path to the Dogefile"
     default: "Dogefile"
   api_url:
     description: "URL of the DogeOps API"
-    required: true
-  api_key:
-    description: "API key to authenticate with DogeOps"
     required: true
 
   # other args to pass to the script
