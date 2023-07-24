@@ -50,6 +50,13 @@ function get_dogefile {
     printf '%s' "$content"
 }
 
+function get_git_ref {
+    local repo="$1"
+    local ref
+    ref="$(git symbolic-ref HEAD)"
+    printf '%s' "$ref"
+}
+
 # make a JSON object with the context of the event
 function make_context {
     local event="$1"
@@ -68,45 +75,4 @@ function print_array_as_json() {
         printf '"%s":"%s",\n' "$k" "${__p[$k]}"
     done
     echo "}"
-}
-
-# parse doge options in commit message
-# options are in the form of:
-# '# doge: command [<option=value> ...]'
-# e.g. '# doge: bark volume=10 duration=5'
-function parse_doge_options {
-    local message="$1"
-
-    local command=""
-    declare -A options
-
-    # Regular expression pattern for matching the specified string
-    pattern="^# +doge: +([^[:space:]]+)(.*)$"
-
-    # Loop through lines in the input
-    while IFS= read -r line; do
-        if [[ $line =~ $pattern ]]; then
-            command="${BASH_REMATCH[1]}"     # Extract the command from the first capturing group
-            option_list="${BASH_REMATCH[2]}" # Extract the option list from the second capturing group
-            verbose "Command: $command"
-
-            # Extract option names and values from the option list
-            while [[ $option_list =~ ([[:alnum:]]+)=([^[:space:]]+) ]]; do
-                option_name="${BASH_REMATCH[1]}"  # Extract the option name from the first capturing group
-                option_value="${BASH_REMATCH[2]}" # Extract the option value from the second capturing group
-                verbose "Option Name: $option_name"
-                verbose "Option Value: $option_value"
-                options["$option_name"]="$option_value"            # Add the option name-value pair to the options array
-                option_list="${option_list#*"${BASH_REMATCH[0]}"}" # Remove the matched option name-value pair from the option list
-            done
-            break
-        fi
-    done <<<"$message"
-
-    if [[ ! -z "$command" ]]; then
-        # use yq to convert array to json, that has extra commas
-        printf '{"command":"%s", "kwargs": %s}' "$command" "$(print_array_as_json options)" | yq eval .
-    else
-        printf '{}'
-    fi
 }

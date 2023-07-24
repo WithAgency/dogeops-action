@@ -29,6 +29,7 @@ function usage {
     echo "  -d, --dogefile <path>  Path to the Dogefile to use"
     echo "  -e, --event <name>     Name of the event to trigger"
     echo "  -r, --repo <path>      Path to the repository to use"
+    echo "  -f, --ref <ref>        Ref to use for the commit"
     echo "  -v, --verbose          Print verbose output"
 }
 
@@ -37,6 +38,7 @@ dogefile="Dogefile"
 event=${GITHUB_EVENT_NAME:-"push"}
 repo="."
 verbose=n
+ref=${GITHUB_REF:-""}
 
 function parse_input_args {
     # Parse CLI arguments
@@ -44,8 +46,8 @@ function parse_input_args {
     # option --event/-e requires 1 argument
     # option --repo/-r requires 1 argument
     # option --verbose/-v requires 0 arguments
-    LONG_OPTS=dogefile:,event:,repo:,verbose
-    OPTIONS=d:e:r:v
+    LONG_OPTS=dogefile:,event:,repo:,ref:,verbose
+    OPTIONS=d:e:r:f:v
 
     # -regarding ! and PIPESTATUS see above
     # -temporarily store output to be able to check for errors
@@ -82,6 +84,10 @@ function parse_input_args {
             repo="$2"
             shift 2
             ;;
+        -f | --ref)
+            ref="$2"
+            shift 2
+            ;;
         --)
             shift
             break
@@ -114,6 +120,11 @@ if [[ ! -f "$dogefile" ]]; then
     die 1 "Dogefile not found: $dogefile"
 fi
 
+# check if ref is set
+if [[ -z "$ref" ]]; then
+    ref="$(get_git_ref "$repo")"
+fi
+
 source "$SCRIPT_DIR/_api.sh"
 source "$SCRIPT_DIR/_outcome.sh"
 
@@ -121,6 +132,7 @@ source "$SCRIPT_DIR/_outcome.sh"
 verbose "Dogefile: $dogefile"
 verbose "Event: $event"
 verbose "Repo: $repo"
+verbose "Ref: $ref"
 
 function main {
     local repo
@@ -128,17 +140,14 @@ function main {
     local committer_name
     local committer_email
     local commit
-    local branch
     local sha
     local message
     local payload
     local context
-    local options
     local repo_url
 
     # repo
     repo_url="$(git remote get-url origin)"
-    branch="$(git symbolic-ref HEAD)"
     sha="$(git rev-parse HEAD)"
     # committer
     committer_email="$(git log -1 --pretty=format:'%ae')"
@@ -157,7 +166,7 @@ function main {
 
     event="$event"
     author="$(make_author "$committer_name" "$committer_email")"
-    commit="$(make_commit "$branch" "$sha" "$message")"
+    commit="$(make_commit "$ref" "$sha" "$message")"
     dogefile="$(get_dogefile "$dogefile")"
 
     context="$(make_context "$event" "$repo_url" "$author" "$commit" "$payload")"

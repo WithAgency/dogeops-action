@@ -13,11 +13,15 @@ inputs:
     description: "API key to authenticate with DogeOps"
     required: true
 
+# runs:
+#   using: "composite"
+#   steps:
+#     - shell: bash
+#       run: |
+#         DOGEOPS_API_URL=${{ inputs.api_url }} \
+#         DOGEOPS_API_KEY=${{ inputs.api_key }} \
+#         "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}
+
 runs:
-  using: "composite"
-  steps:
-    - shell: bash
-      run: |
-        DOGEOPS_API_URL=${{ inputs.api_url }} \
-        DOGEOPS_API_KEY=${{ inputs.api_key }} \
-        "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}
+  using: "node18"
+  main: "dist/index.js --help"
