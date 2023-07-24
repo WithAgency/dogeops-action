@@ -22,25 +22,6 @@ class MuchError(Exception):
     pass
 
 
-def upload_manifest(
-    dogefile: dict[str, Any],
-    ctx: dm.Context,
-    opts: Options,
-) -> dm.Deployment:
-    """
-    Submit the information to the API.
-    The API will then create a deployment and return the deployment details,
-    such as its ID and progress URL.
-    """
-
-    try:
-        deployment = api.deploy(context=ctx, dogefile=dogefile, options=opts)
-    except HTTPError as he:
-        raise MuchError(he.args[0])
-
-    return deployment
-
-
 COMMAND_RE = re.compile(r"^# +doge: (?P<command>\w+)(?P<args>.*)?$", re.I | re.M)
 OPTION_LIST_RE = re.compile(r"(?P<name>\w+)(?:=(?P<value>\w+))?")
 

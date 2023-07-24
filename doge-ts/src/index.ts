@@ -3,6 +3,8 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {existsSync} from "fs";
 
+import {Context, Author, Commit} from "./context";
+
 interface Args {
     api_url: string,
     api_key: string,
@@ -14,14 +16,13 @@ interface Args {
 }
 
 function getArgs(): Args {
-    core.info(JSON.stringify(process.env));
     const args = {
         api_url: core.getInput('api_url'),
         api_key: core.getInput('api_key'),
         dogefile: core.getInput('dogefile') || "Dogefile",
         event: process.env.GITHUB_EVENT_NAME || "",
-        repo: core.getInput("repo") || process.env.GITHUB_WORKSPACE || process.cwd(),
-        ref: core.getInput('ref') || process.env.GITHUB_REF_NAME || "",
+        repo: process.env.GITHUB_WORKSPACE || process.cwd(),
+        ref: process.env.GITHUB_REF_NAME || "",
         verbose: core.getInput('verbose') === "true" || false,
     }
 
@@ -40,7 +41,7 @@ function getArgs(): Args {
 const args: Args = getArgs();
 
 async function run(args: Args) {
-    return args;
+    const context: Context = await getContext(args);
 }
 
 run(args).then(res => {

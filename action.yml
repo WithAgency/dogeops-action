@@ -36,6 +36,15 @@ inputs:
 #         DOGEOPS_API_KEY=${{ inputs.api_key }} \
 #         "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}
 
+# runs:
+#   using: "node16"
+#   main: "doge-ts/dist/index.js"
+
 runs:
-  using: "node16"
-  main: "doge-ts/dist/index.js"
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        DOGEOPS_API_URL=${{ inputs.api_url }} \
+        DOGEOPS_API_KEY=${{ inputs.api_key }} \
+        "${GITHUB_ACTION_PATH}"/.venv/bin/python -m doge -v -d ${{ inputs.dogefile }}
