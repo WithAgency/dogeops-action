@@ -37,5 +37,9 @@ async function run(args: Args) {
     return args;
 }
 
-const res = await run(args);
-console.log(res);
+run(args).then(res => {
+    console.log(res);
+}).catch(err => {
+    console.error(err);
+    process.exit(1);
+});
