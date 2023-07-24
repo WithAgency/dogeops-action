@@ -17,7 +17,10 @@ def get_repo_context(event: str, repo: Path) -> dm.Context:
     return dm.Context(
         event=event,
         repo=repo.remotes.origin.url,
-        author=dm.Author(commit.committer.name, commit.committer.email),
+        author=dm.Author(
+            commit.committer.name,
+            commit.committer.email,
+        ),
         commit=dm.Commit(
             ref=ref.path,
             sha=commit.hexsha,

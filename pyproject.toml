@@ -1,9 +1,11 @@
 [tool.poetry]
 name = "dogeaction"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"]
-
+packages = [
+    {include = "dogeaction"},
+]
 
 [tool.poetry.dependencies]
 python = "~3.10"
@@ -16,8 +18,8 @@ httpx = "^0.24.1"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.11.0"
-isort = "^5.10.1"
-black = "^23.3.0"
+isort = "*"
+black = "*"
 pytest = "^7.1.2"
 pyinstaller = "^5.10.1"
 

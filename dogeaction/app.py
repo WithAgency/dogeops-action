@@ -2,7 +2,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import typer
 from httpx import HTTPError
@@ -15,7 +15,7 @@ from dogeaction.models.dogeops import Options
 
 logger = logging.getLogger(__name__)
 
-app = typer.Typer()
+app = typer.Typer(name="doge", add_completion=False)
 
 
 class MuchError(Exception):
