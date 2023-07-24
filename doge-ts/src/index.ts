@@ -38,8 +38,8 @@ async function run(args: Args) {
 }
 
 run(args).then(res => {
-    console.log(res);
+    core.info(`${res}`);
 }).catch(err => {
-    console.error(err);
+    core.error(err);
     process.exit(1);
 });
