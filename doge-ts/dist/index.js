@@ -1,6 +1,82 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 283:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const path_1 = __importDefault(__nccwpck_require__(17));
+const core = __importStar(__nccwpck_require__(186));
+function getArgs() {
+    var _a, _b, _c;
+    const args = {
+        api_url: core.getInput('api_url'),
+        api_key: core.getInput('api_key'),
+        dogefile: core.getInput('dogefile'),
+        event: core.getInput('event_name'),
+        repo: (_a = core.getInput('repo')) !== null && _a !== void 0 ? _a : process.env.GITHUB_WORKSPACE,
+        ref: (_b = core.getInput('ref')) !== null && _b !== void 0 ? _b : process.env.GITHUB_REF,
+        verbose: (_c = core.getInput('verbose') === 'true') !== null && _c !== void 0 ? _c : false,
+    };
+    if (args.repo) {
+        args.repo = path_1.default.resolve(args.repo);
+    }
+    args.dogefile = path_1.default.resolve(args.repo, args.dogefile);
+    return args;
+}
+const args = getArgs();
+function run(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return args;
+    });
+}
+run(args).then(res => {
+    console.log(res);
+}).catch(err => {
+    console.error(err);
+    process.exit(1);
+});
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -2824,92 +2900,18 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(17);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
-
-
-function getArgs() {
-    const args = {
-        api_url: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('api_url'),
-        api_key: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('api_key'),
-        dogefile: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('dogefile'),
-        event: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('event_name'),
-        repo: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('repo') ?? process.env.GITHUB_WORKSPACE,
-        ref: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('ref') ?? process.env.GITHUB_REF,
-        verbose: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('verbose') === 'true' ?? false,
-    };
-    if (args.repo) {
-        args.repo = path__WEBPACK_IMPORTED_MODULE_0___default().resolve(args.repo);
-    }
-    args.dogefile = path__WEBPACK_IMPORTED_MODULE_0___default().resolve(args.repo, args.dogefile);
-    return args;
-}
-const args = getArgs();
-async function run(args) {
-    return args;
-}
-run(args).then(res => {
-    console.log(res);
-}).catch(err => {
-    console.error(err);
-    process.exit(1);
-});
-//# sourceMappingURL=index.js.map
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(283);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
