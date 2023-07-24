@@ -47,4 +47,4 @@ runs:
       run: |
         DOGEOPS_API_URL=${{ inputs.api_url }} \
         DOGEOPS_API_KEY=${{ inputs.api_key }} \
-        "${GITHUB_ACTION_PATH}"/.venv/bin/python -m doge -v -d ${{ inputs.dogefile }}
+        "${GITHUB_ACTION_PATH}"/.venv/bin/doge -v -d ${{ inputs.dogefile }}
