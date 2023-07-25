@@ -49,3 +49,5 @@ run(args).then(res => {
     core.error(err);
     process.exit(1);
 });
+
+export {Args, run};

@@ -1,4 +1,5 @@
 import * as github from '@actions/github';
+import {Args} from "."
 
 type Author = {
     name: string,
@@ -21,7 +22,7 @@ type Context = {
     dogefile: unknown,
 }
 
-async function getContext(args: unknown): Promise<Context> {
+async function getContext(args: Args): Promise<Context> {
     const githubContext = github.context;
     const payload = githubContext.payload;
     const commit : Commit = {
