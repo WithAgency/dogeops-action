@@ -45,6 +45,10 @@ runs:
   steps:
     - shell: bash
       run: |
+        ls -laRt "${GITHUB_ACTION_PATH}"
+
+    - shell: bash
+      run: |
         DOGEOPS_API_URL=${{ inputs.api_url }} \
         DOGEOPS_API_KEY=${{ inputs.api_key }} \
         "${GITHUB_ACTION_PATH}"/.venv/bin/doge -v -d ${{ inputs.dogefile }}
