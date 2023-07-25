@@ -41,6 +41,8 @@ const args: Args = getArgs();
 
 async function run(args: Args) {
     const context: Context = await getContext(args);
+
+    return JSON.stringify(context);
 }
 
 run(args).then(res => {
