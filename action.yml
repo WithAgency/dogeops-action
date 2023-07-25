@@ -2,11 +2,6 @@ name: "DogeOps to the mooooooooon 🚀"
 author: "Carlos Gonzalez <carlos.gonzalez@with-madrid.com>"
 description: "Request the deployment of this repository via DogeOps"
 
-secrets:
-  api_key:
-    description: "API key to authenticate with DogeOps"
-    required: true
-
 inputs:
   dogefile:
     description: "Path to the Dogefile"
@@ -14,14 +9,11 @@ inputs:
   api_url:
     description: "URL of the DogeOps API"
     required: true
+  api_key:
+    description: "API key to authenticate with DogeOps"
+    required: true
 
   # other args to pass to the script
-  event:
-    description: "Event to trigger"
-    required: false
-  ref:
-    description: "Ref to deploy"
-    required: false
   verbose:
     description: "Verbose output"
     required: false
@@ -36,19 +28,6 @@ inputs:
 #         DOGEOPS_API_KEY=${{ inputs.api_key }} \
 #         "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}
 
-# runs:
-#   using: "node16"
-#   main: "doge-ts/dist/index.js"
-
 runs:
-  using: "composite"
-  steps:
-    - shell: bash
-      run: |
-        ls -laRt "${GITHUB_ACTION_PATH}"
-
-    - shell: bash
-      run: |
-        DOGEOPS_API_URL=${{ inputs.api_url }} \
-        DOGEOPS_API_KEY=${{ inputs.api_key }} \
-        "${GITHUB_ACTION_PATH}"/.venv/bin/doge -v -d ${{ inputs.dogefile }}
+  using: "node16"
+  main: "dist/index.js"
