@@ -15,6 +15,10 @@ interface Args {
 }
 
 function getArgs(): Args {
+    const repoDir = process.env.GITHUB_WORKSPACE || process.cwd();
+
+
+
     const args = {
         api_url: core.getInput('api_url'),
         api_key: core.getInput('api_key'),
@@ -42,7 +46,7 @@ const args: Args = getArgs();
 async function run(args: Args) {
     const context: Context = await getContext(args);
 
-    return JSON.stringify(context);
+    return context;
 }
 
 run(args).then(res => {

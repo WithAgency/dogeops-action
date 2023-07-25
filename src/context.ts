@@ -1,17 +1,7 @@
 import * as github from '@actions/github';
 import {Args} from "."
 
-type Author = {
-    name: string,
-    email: string,
-    username: string,
-}
-
-type Commit = {
-    ref: string,
-    sha: string,
-    message: string,
-}
+import {Author, Commit} from "./git";
 
 type Context = {
     event: string,

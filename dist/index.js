@@ -118,6 +118,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __nccwpck_require__(7147);
 const context_1 = __nccwpck_require__(7331);
 function getArgs() {
+    const repoDir = process.env.GITHUB_WORKSPACE || process.cwd();
     const args = {
         api_url: core.getInput('api_url'),
         api_key: core.getInput('api_key'),
@@ -140,6 +141,7 @@ const args = getArgs();
 function run(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const context = yield (0, context_1.getContext)(args);
+        return context;
     });
 }
 exports.run = run;
