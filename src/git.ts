@@ -14,7 +14,7 @@ export type Commit = {
     message: string,
 }
 
-class GitRepo {
+export class GitRepo {
     private info: GitRepoInfo;
 
     constructor(repoDir: string) {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GitRepo = void 0;
 const getRepoInfo = require('git-repo-info');
 class GitRepo {
     constructor(repoDir) {
@@ -20,4 +21,5 @@ class GitRepo {
         };
     }
 }
+exports.GitRepo = GitRepo;
 //# sourceMappingURL=git.js.map

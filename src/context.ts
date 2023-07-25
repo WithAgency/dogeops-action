@@ -26,15 +26,14 @@ async function getContext(args: Args): Promise<Context> {
         username: githubContext.payload.head_commit.author.username,
     }
 
-    const ctx: Context = {
+    return {
         event: args.event,
         repo: args.repo,
         commit: commit,
         payload: payload,
         dogefile: args.dogefile,
         author: author,
-    }
-    return ctx;
+    };
 }
 
-export { Author, Commit, Context, getContext };
+export { Context, getContext };

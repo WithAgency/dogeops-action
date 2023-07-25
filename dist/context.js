@@ -48,7 +48,7 @@ function getContext(args) {
             email: githubContext.payload.head_commit.author.email,
             username: githubContext.payload.head_commit.author.username,
         };
-        const ctx = {
+        return {
             event: args.event,
             repo: args.repo,
             commit: commit,
@@ -56,7 +56,6 @@ function getContext(args) {
             dogefile: args.dogefile,
             author: author,
         };
-        return ctx;
     });
 }
 exports.getContext = getContext;
