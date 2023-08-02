@@ -34,29 +34,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getContext = void 0;
 const github = __importStar(require("@actions/github"));
+const git_1 = require("./git");
+const logging_1 = require("./logging");
+const fs_1 = require("fs");
+const yaml = require('js-yaml');
+const logger = (0, logging_1.getLogger)("context");
 function getContext(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        let author;
+        let payload;
+        let commit;
         const githubContext = github.context;
-        const payload = githubContext.payload;
-        const commit = {
-            ref: githubContext.ref,
-            sha: githubContext.sha,
-            message: githubContext.payload.head_commit.message,
-        };
-        const author = {
-            name: githubContext.payload.head_commit.author.name,
-            email: githubContext.payload.head_commit.author.email,
-            username: githubContext.payload.head_commit.author.username,
-        };
+        // no payload means we're running locally
+        if (githubContext.payload.head_commit !== undefined) {
+            logger.debug("getting context from github");
+            payload = githubContext.payload;
+            commit = {
+                ref: githubContext.ref,
+                sha: githubContext.sha,
+                message: githubContext.payload.head_commit.message,
+            };
+            author = {
+                name: githubContext.payload.head_commit.author.name,
+                email: githubContext.payload.head_commit.author.email,
+            };
+        }
+        else {
+            logger.debug("getting context from git repo");
+            const repo = new git_1.GitRepo(args.repo);
+            const ref = args.ref;
+            payload = {};
+            commit = repo.getCommit();
+            author = repo.getAuthor();
+        }
+        const dogefile = loadDogefile(args.dogefile);
         return {
             event: args.event,
             repo: args.repo,
-            commit: commit,
-            payload: payload,
-            dogefile: args.dogefile,
-            author: author,
+            commit,
+            author,
+            dogefile,
+            payload,
         };
     });
 }
 exports.getContext = getContext;
+function loadDogefile(dogefile) {
+    try {
+        const data = yaml.load((0, fs_1.readFileSync)(dogefile, { encoding: 'utf-8' }));
+        logger.debug(`dogefile: ${JSON.stringify(data)}`);
+        return data;
+    }
+    catch (e) {
+        logger.error(`failed to load ${dogefile}: ${e}`);
+        throw e;
+    }
+}
 //# sourceMappingURL=context.js.map

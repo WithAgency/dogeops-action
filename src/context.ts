@@ -1,9 +1,15 @@
 import * as github from '@actions/github';
 import {Args} from "."
 
-import {Author, Commit} from "./git";
+import {Author, Commit, GitRepo} from "./git";
+import {getLogger} from "./logging";
+import {readFileSync} from "fs";
+const yaml = require('js-yaml');
 
-type Context = {
+const logger = getLogger("context");
+
+
+export type Context = {
     event: string,
     repo: string,
     author: Author,
@@ -12,28 +18,56 @@ type Context = {
     dogefile: unknown,
 }
 
-async function getContext(args: Args): Promise<Context> {
+export async function getContext(args: Args): Promise<Context> {
+    let author: Author;
+    let payload: unknown;
+    let commit: Commit;
+
     const githubContext = github.context;
-    const payload = githubContext.payload;
-    const commit : Commit = {
-        ref: githubContext.ref,
-        sha: githubContext.sha,
-        message: githubContext.payload.head_commit.message,
+
+    // no payload means we're running locally
+    if (githubContext.payload.head_commit !== undefined) {
+        logger.debug("getting context from github")
+        payload = githubContext.payload;
+        commit = {
+            ref: githubContext.ref,
+            sha: githubContext.sha,
+            message: githubContext.payload.head_commit.message,
+        }
+        author = {
+            name: githubContext.payload.head_commit.author.name,
+            email: githubContext.payload.head_commit.author.email,
+        }
+    } else {
+        logger.debug("getting context from git repo")
+        const repo: GitRepo = new GitRepo(args.repo);
+
+        const ref = args.ref;
+        payload = {};
+        commit = repo.getCommit();
+        author = repo.getAuthor();
     }
-    const author : Author = {
-        name: githubContext.payload.head_commit.author.name,
-        email: githubContext.payload.head_commit.author.email,
-        username: githubContext.payload.head_commit.author.username,
-    }
+
+    const dogefile = loadDogefile(args.dogefile);
 
     return {
         event: args.event,
         repo: args.repo,
-        commit: commit,
-        payload: payload,
-        dogefile: args.dogefile,
-        author: author,
+        commit,
+        author,
+        dogefile,
+        payload,
     };
 }
 
-export { Context, getContext };
+function loadDogefile(dogefile: string): unknown {
+    try {
+        const data = yaml.load(readFileSync(dogefile, {encoding: 'utf-8'}));
+        logger.debug(`dogefile: ${JSON.stringify(data)}`);
+        return data;
+    }
+    catch (e) {
+        logger.error(`failed to load ${dogefile}: ${e}`);
+        throw e;
+    }
+}

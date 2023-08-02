@@ -1,11 +1,13 @@
 import {GitRepoInfo} from "git-repo-info";
+import {getLogger} from "./logging";
 
 const getRepoInfo = require('git-repo-info');
+
+const logger = getLogger("git");
 
 export type Author = {
     name: string,
     email: string,
-    username: string,
 }
 
 export type Commit = {
@@ -21,12 +23,20 @@ export class GitRepo {
         this.info = getRepoInfo(repoDir);
     }
 
+    private splitAuthor(author: string): [string, string] {
+        const [name, email] = author.split(" <");
+        return [name, email.slice(0, -1)];
+    }
+
     getAuthor(): Author {
-        return {
-            name: this.info.author,
-            email: this.info.committer,
-            username: this.info.author,
+        const [name, email] = this.splitAuthor(this.info.author);
+
+        const author: Author = {
+            name: name,
+            email: email,
         }
+        logger.debug(`author: ${JSON.stringify(author)}`);
+        return author;
     }
 
     getCommit(): Commit {
