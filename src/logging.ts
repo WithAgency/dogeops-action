@@ -1,11 +1,13 @@
 import * as core from '@actions/core';
 import chalk from "chalk";
 
+export type LogLevel = "debug" | "info" | "warn" | "error";
+
 export interface LogInterface {
-    debug: (message: string, ...supportingData: any[]) => void;
-    info: (message: string, ...supportingData: any[]) => void;
-    warn: (message: string, ...supportingData: any[]) => void;
-    error: (message: string, ...supportingData: any[]) => void;
+    debug: (message: string, ...supportingData: unknown[]) => void;
+    info: (message: string, ...supportingData: unknown[]) => void;
+    warn: (message: string, ...supportingData: unknown[]) => void;
+    error: (error: string | Error, ...supportingData: unknown[]) => void;
 }
 
 function verbose() {
@@ -23,6 +25,17 @@ const logColors = {
     error: chalk.red,
 }
 
+const logPrefixes = {
+    debug: "[DBG]",
+    info: "[INF]",
+    warn: "[WRN]",
+    error: "[ERR]",
+}
+
+function splitLines(t: string) {
+    return t.split(/\r\n|\r|\n/);
+}
+
 export class Log implements LogInterface {
     private readonly verbose: boolean;
     private readonly name: string;
@@ -35,32 +48,55 @@ export class Log implements LogInterface {
         this.name = name;
     }
 
-    private logMessage(msgType: "debug" | "info" | "warn" | "error", message: string, ...supportingData: any[]) {
-        let msg = `${this.name} - ${message}`;
+    private formatMessage(
+        level: LogLevel,
+        message: string,
+    ): string {
+        let msg = `${logPrefixes[level]} ${message}`;
+        return msg;
+    }
 
-        msg = logColors[msgType](msg);
+    private logMessage(
+        level: LogLevel,
+        message: string,
+        ...supportingData: unknown[]
+    ) {
+
+        const lines = [];
+        for (let line of message.split("\n")) {
+            lines.push(this.formatMessage(level, line));
+        }
+        const color = logColors[level];
+        const msg = color(lines.join("\n"));
         if (supportingData.length > 0) {
-            console[msgType](msg, ...supportingData);
+            console[level](msg, ...supportingData);
         } else {
-            console[msgType](msg);
+            console[level](msg);
         }
     }
 
-    public debug(message: string, ...supportingData: any[]) {
+    public debug(message: string, ...supportingData: unknown[]) {
         if (this.verbose) {
             this.logMessage("debug", message, ...supportingData);
         }
     }
 
-    public info(message: string, ...supportingData: any[]) {
+    public info(message: string, ...supportingData: unknown[]) {
         this.logMessage("info", message, ...supportingData);
     }
 
-    public warn(message: string, ...supportingData: any[]) {
+    public warn(message: string, ...supportingData: unknown[]) {
         this.logMessage("warn", message, ...supportingData);
     }
 
-    public error(message: string, ...supportingData: any[]) {
-        this.logMessage("error", message, ...supportingData);
+    public error(message: string | Error, ...supportingData: unknown[]) {
+        if (message instanceof Error) {
+            message = message.stack || message.message;
+        }
+        this.logMessage(
+            "error",
+            message as string,
+            ...supportingData
+        );
     }
 }

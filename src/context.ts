@@ -3,8 +3,6 @@ import {Args} from "."
 
 import {Author, Commit, GitRepo} from "./git";
 import {getLogger} from "./logging";
-import {readFileSync} from "fs";
-const yaml = require('js-yaml');
 
 const logger = getLogger("context");
 
@@ -15,13 +13,13 @@ export type Context = {
     author: Author,
     commit: Commit,
     payload: unknown,
-    dogefile: unknown,
 }
 
 export async function getContext(args: Args): Promise<Context> {
     let author: Author;
     let payload: unknown;
     let commit: Commit;
+    let remoteUrl: string;
 
     const githubContext = github.context;
 
@@ -38,36 +36,24 @@ export async function getContext(args: Args): Promise<Context> {
             name: githubContext.payload.head_commit.author.name,
             email: githubContext.payload.head_commit.author.email,
         }
+        remoteUrl = githubContext.repo.repo;
     } else {
-        logger.debug("getting context from git repo")
         const repo: GitRepo = new GitRepo(args.repo);
+        logger.debug("getting context from git repo")
 
         const ref = args.ref;
         payload = {};
         commit = repo.getCommit();
         author = repo.getAuthor();
+        remoteUrl = repo.getRemoteUrl();
     }
 
-    const dogefile = loadDogefile(args.dogefile);
 
     return {
         event: args.event,
-        repo: args.repo,
+        repo: remoteUrl,
         commit,
         author,
-        dogefile,
         payload,
     };
-}
-
-function loadDogefile(dogefile: string): unknown {
-    try {
-        const data = yaml.load(readFileSync(dogefile, {encoding: 'utf-8'}));
-        logger.debug(`dogefile: ${JSON.stringify(data)}`);
-        return data;
-    }
-    catch (e) {
-        logger.error(`failed to load ${dogefile}: ${e}`);
-        throw e;
-    }
 }

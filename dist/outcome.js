@@ -75,7 +75,9 @@ function failure(code) {
     logger.error(FAILURE_DOGE);
     logger.error("");
     logger.error(`Dogefile failed to deploy`);
-    logger.error(`Request failed with code ${code}`);
+    if (code !== null) {
+        logger.error(`Request failed with code ${code}`);
+    }
 }
 exports.failure = failure;
 //# sourceMappingURL=outcome.js.map

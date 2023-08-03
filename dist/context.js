@@ -36,14 +36,13 @@ exports.getContext = void 0;
 const github = __importStar(require("@actions/github"));
 const git_1 = require("./git");
 const logging_1 = require("./logging");
-const fs_1 = require("fs");
-const yaml = require('js-yaml');
 const logger = (0, logging_1.getLogger)("context");
 function getContext(args) {
     return __awaiter(this, void 0, void 0, function* () {
         let author;
         let payload;
         let commit;
+        let remoteUrl;
         const githubContext = github.context;
         // no payload means we're running locally
         if (githubContext.payload.head_commit !== undefined) {
@@ -58,36 +57,25 @@ function getContext(args) {
                 name: githubContext.payload.head_commit.author.name,
                 email: githubContext.payload.head_commit.author.email,
             };
+            remoteUrl = githubContext.repo.repo;
         }
         else {
-            logger.debug("getting context from git repo");
             const repo = new git_1.GitRepo(args.repo);
+            logger.debug("getting context from git repo");
             const ref = args.ref;
             payload = {};
             commit = repo.getCommit();
             author = repo.getAuthor();
+            remoteUrl = repo.getRemoteUrl();
         }
-        const dogefile = loadDogefile(args.dogefile);
         return {
             event: args.event,
-            repo: args.repo,
+            repo: remoteUrl,
             commit,
             author,
-            dogefile,
             payload,
         };
     });
 }
 exports.getContext = getContext;
-function loadDogefile(dogefile) {
-    try {
-        const data = yaml.load((0, fs_1.readFileSync)(dogefile, { encoding: 'utf-8' }));
-        logger.debug(`dogefile: ${JSON.stringify(data)}`);
-        return data;
-    }
-    catch (e) {
-        logger.error(`failed to load ${dogefile}: ${e}`);
-        throw e;
-    }
-}
 //# sourceMappingURL=context.js.map

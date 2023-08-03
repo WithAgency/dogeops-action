@@ -51,7 +51,7 @@ function getBaseUrl() {
     return baseUrl;
 }
 function getApiUrl(path) {
-    return `${getBaseUrl()}/${path}`;
+    return `${getBaseUrl()}${path}`;
 }
 exports.getApiUrl = getApiUrl;
 function authHeaders(otherHeaders = {}) {

@@ -16,7 +16,7 @@ function getBaseUrl() {
 }
 
 export function getApiUrl(path: string) {
-    return `${getBaseUrl()}/${path}`;
+    return `${getBaseUrl()}${path}`;
 }
 
 function authHeaders(otherHeaders: Record<string, string> = {}) {

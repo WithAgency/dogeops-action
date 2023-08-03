@@ -1,6 +1,7 @@
 import path from "path";
 import * as core from '@actions/core'
-import {existsSync} from "fs";
+import {existsSync, readFileSync} from "fs";
+const yaml = require('js-yaml');
 
 import {Context, getContext} from "./context";
 import {getLogger} from "./logging";
@@ -34,7 +35,7 @@ function getArgs(): Args {
         dogefile: core.getInput('dogefile') || "Dogefile",
         event: process.env.GITHUB_EVENT_NAME || "",
         repo: repoDir,
-        ref: process.env.GITHUB_REF_NAME || "",
+        ref: process.env.GITHUB_REF || "",
     }
 
     args.dogefile = path.resolve(repoDir, args.dogefile);
@@ -53,16 +54,35 @@ export type Deployment = {
     progress_url: string,
 }
 
+
+function loadDogefile(dogefile: string): unknown {
+    try {
+        const data = yaml.load(readFileSync(dogefile, {encoding: 'utf-8'}));
+        logger.debug(`dogefile: ${JSON.stringify(data)}`);
+        return data;
+    }
+    catch (e) {
+        logger.error(`failed to load ${dogefile}: ${e}`);
+        throw e;
+    }
+}
+
+
 export async function run(args: Args): Promise<[Deployment, number]> {
     const context: Context = await getContext(args);
+    const dogefile = loadDogefile(args.dogefile);
+
+    const requestData = {
+        context,
+        dogefile,
+    }
     logger.debug(`context: ${JSON.stringify(context, null, 2)}`);
-    const [response, statusCode] = await post('/back/api/deployment/', context) as [Deployment, number];
+    const [response, statusCode] = (await post('/back/api/paas/deployment/', requestData)) as [Deployment, number];
 
     return [response, statusCode];
 }
 
 run(args).then(([res, statusCode]) => {
-    logger.debug(JSON.stringify(res, null, 2));
     if (res.status === "succeeded") {
         if (statusCode === 201) {
             success(res)
@@ -74,6 +94,7 @@ run(args).then(([res, statusCode]) => {
         core.setFailed("Deployment failed");
     }
 }).catch(err => {
+    failure(null);
     logger.error(err);
-    process.exit(1);
+    core.setFailed(err.message)
 });

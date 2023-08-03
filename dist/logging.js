@@ -42,19 +42,36 @@ const logColors = {
     warn: chalk_1.default.yellow,
     error: chalk_1.default.red,
 };
+const logPrefixes = {
+    debug: "[DBG]",
+    info: "[INF]",
+    warn: "[WRN]",
+    error: "[ERR]",
+};
+function splitLines(t) {
+    return t.split(/\r\n|\r|\n/);
+}
 class Log {
     constructor(name, verbose) {
         this.verbose = verbose;
         this.name = name;
     }
-    logMessage(msgType, message, ...supportingData) {
-        let msg = `${this.name} - ${message}`;
-        msg = logColors[msgType](msg);
+    formatMessage(level, message) {
+        let msg = `${logPrefixes[level]} ${message}`;
+        return msg;
+    }
+    logMessage(level, message, ...supportingData) {
+        const lines = [];
+        for (let line of message.split("\n")) {
+            lines.push(this.formatMessage(level, line));
+        }
+        const color = logColors[level];
+        const msg = color(lines.join("\n"));
         if (supportingData.length > 0) {
-            console[msgType](msg, ...supportingData);
+            console[level](msg, ...supportingData);
         }
         else {
-            console[msgType](msg);
+            console[level](msg);
         }
     }
     debug(message, ...supportingData) {
@@ -69,6 +86,9 @@ class Log {
         this.logMessage("warn", message, ...supportingData);
     }
     error(message, ...supportingData) {
+        if (message instanceof Error) {
+            message = message.stack || message.message;
+        }
         this.logMessage("error", message, ...supportingData);
     }
 }

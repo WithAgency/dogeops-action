@@ -58,7 +58,7 @@ function getBaseUrl() {
     return baseUrl;
 }
 function getApiUrl(path) {
-    return `${getBaseUrl()}/${path}`;
+    return `${getBaseUrl()}${path}`;
 }
 exports.getApiUrl = getApiUrl;
 function authHeaders(otherHeaders = {}) {
@@ -127,14 +127,13 @@ exports.getContext = void 0;
 const github = __importStar(__nccwpck_require__(5438));
 const git_1 = __nccwpck_require__(7592);
 const logging_1 = __nccwpck_require__(9174);
-const fs_1 = __nccwpck_require__(7147);
-const yaml = __nccwpck_require__(1917);
 const logger = (0, logging_1.getLogger)("context");
 function getContext(args) {
     return __awaiter(this, void 0, void 0, function* () {
         let author;
         let payload;
         let commit;
+        let remoteUrl;
         const githubContext = github.context;
         // no payload means we're running locally
         if (githubContext.payload.head_commit !== undefined) {
@@ -149,38 +148,27 @@ function getContext(args) {
                 name: githubContext.payload.head_commit.author.name,
                 email: githubContext.payload.head_commit.author.email,
             };
+            remoteUrl = githubContext.repo.repo;
         }
         else {
-            logger.debug("getting context from git repo");
             const repo = new git_1.GitRepo(args.repo);
+            logger.debug("getting context from git repo");
             const ref = args.ref;
             payload = {};
             commit = repo.getCommit();
             author = repo.getAuthor();
+            remoteUrl = repo.getRemoteUrl();
         }
-        const dogefile = loadDogefile(args.dogefile);
         return {
             event: args.event,
-            repo: args.repo,
+            repo: remoteUrl,
             commit,
             author,
-            dogefile,
             payload,
         };
     });
 }
 exports.getContext = getContext;
-function loadDogefile(dogefile) {
-    try {
-        const data = yaml.load((0, fs_1.readFileSync)(dogefile, { encoding: 'utf-8' }));
-        logger.debug(`dogefile: ${JSON.stringify(data)}`);
-        return data;
-    }
-    catch (e) {
-        logger.error(`failed to load ${dogefile}: ${e}`);
-        throw e;
-    }
-}
 //# sourceMappingURL=context.js.map
 
 /***/ }),
@@ -193,15 +181,26 @@ function loadDogefile(dogefile) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GitRepo = void 0;
 const logging_1 = __nccwpck_require__(9174);
+const { execSync } = __nccwpck_require__(2081);
+const shell = (cwd, cmd) => {
+    const command = `cd ${cwd} && ${cmd}`;
+    return execSync(command, { encoding: 'utf8' }).trimEnd();
+};
 const getRepoInfo = __nccwpck_require__(7640);
 const logger = (0, logging_1.getLogger)("git");
 class GitRepo {
     constructor(repoDir) {
+        this.repoDir = repoDir;
         this.info = getRepoInfo(repoDir);
+        logger.debug(`repo info: ${JSON.stringify(this.info)}`);
     }
     splitAuthor(author) {
         const [name, email] = author.split(" <");
         return [name, email.slice(0, -1)];
+    }
+    getRemoteUrl() {
+        const remote = shell(this.repoDir, "git config --get remote.origin.url");
+        return remote.trim();
     }
     getAuthor() {
         const [name, email] = this.splitAuthor(this.info.author);
@@ -213,8 +212,10 @@ class GitRepo {
         return author;
     }
     getCommit() {
+        // return the full refs/heads/branch name
+        const ref = shell(this.repoDir, "git symbolic-ref HEAD");
         return {
-            ref: this.info.branch,
+            ref,
             sha: this.info.sha,
             message: this.info.commitMessage,
         };
@@ -270,6 +271,7 @@ exports.run = void 0;
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __nccwpck_require__(7147);
+const yaml = __nccwpck_require__(1917);
 const context_1 = __nccwpck_require__(7331);
 const logging_1 = __nccwpck_require__(9174);
 const api_1 = __nccwpck_require__(2491);
@@ -290,7 +292,7 @@ function getArgs() {
         dogefile: core.getInput('dogefile') || "Dogefile",
         event: process.env.GITHUB_EVENT_NAME || "",
         repo: repoDir,
-        ref: process.env.GITHUB_REF_NAME || "",
+        ref: process.env.GITHUB_REF || "",
     };
     args.dogefile = path_1.default.resolve(repoDir, args.dogefile);
     if (!(0, fs_1.existsSync)(args.dogefile)) {
@@ -299,17 +301,32 @@ function getArgs() {
     return args;
 }
 const args = getArgs();
+function loadDogefile(dogefile) {
+    try {
+        const data = yaml.load((0, fs_1.readFileSync)(dogefile, { encoding: 'utf-8' }));
+        logger.debug(`dogefile: ${JSON.stringify(data)}`);
+        return data;
+    }
+    catch (e) {
+        logger.error(`failed to load ${dogefile}: ${e}`);
+        throw e;
+    }
+}
 function run(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const context = yield (0, context_1.getContext)(args);
+        const dogefile = loadDogefile(args.dogefile);
+        const requestData = {
+            context,
+            dogefile,
+        };
         logger.debug(`context: ${JSON.stringify(context, null, 2)}`);
-        const [response, statusCode] = yield (0, api_1.post)('/back/api/deployment/', context);
+        const [response, statusCode] = (yield (0, api_1.post)('/back/api/paas/deployment/', requestData));
         return [response, statusCode];
     });
 }
 exports.run = run;
 run(args).then(([res, statusCode]) => {
-    logger.debug(JSON.stringify(res, null, 2));
     if (res.status === "succeeded") {
         if (statusCode === 201) {
             (0, outcome_1.success)(res);
@@ -323,8 +340,9 @@ run(args).then(([res, statusCode]) => {
         core.setFailed("Deployment failed");
     }
 }).catch(err => {
+    (0, outcome_1.failure)(null);
     logger.error(err);
-    process.exit(1);
+    core.setFailed(err.message);
 });
 //# sourceMappingURL=index.js.map
 
@@ -378,19 +396,36 @@ const logColors = {
     warn: chalk_1.default.yellow,
     error: chalk_1.default.red,
 };
+const logPrefixes = {
+    debug: "[DBG]",
+    info: "[INF]",
+    warn: "[WRN]",
+    error: "[ERR]",
+};
+function splitLines(t) {
+    return t.split(/\r\n|\r|\n/);
+}
 class Log {
     constructor(name, verbose) {
         this.verbose = verbose;
         this.name = name;
     }
-    logMessage(msgType, message, ...supportingData) {
-        let msg = `${this.name} - ${message}`;
-        msg = logColors[msgType](msg);
+    formatMessage(level, message) {
+        let msg = `${logPrefixes[level]} ${message}`;
+        return msg;
+    }
+    logMessage(level, message, ...supportingData) {
+        const lines = [];
+        for (let line of message.split("\n")) {
+            lines.push(this.formatMessage(level, line));
+        }
+        const color = logColors[level];
+        const msg = color(lines.join("\n"));
         if (supportingData.length > 0) {
-            console[msgType](msg, ...supportingData);
+            console[level](msg, ...supportingData);
         }
         else {
-            console[msgType](msg);
+            console[level](msg);
         }
     }
     debug(message, ...supportingData) {
@@ -405,6 +440,9 @@ class Log {
         this.logMessage("warn", message, ...supportingData);
     }
     error(message, ...supportingData) {
+        if (message instanceof Error) {
+            message = message.stack || message.message;
+        }
         this.logMessage("error", message, ...supportingData);
     }
 }
@@ -494,7 +532,9 @@ function failure(code) {
     logger.error(FAILURE_DOGE);
     logger.error("");
     logger.error(`Dogefile failed to deploy`);
-    logger.error(`Request failed with code ${code}`);
+    if (code !== null) {
+        logger.error(`Request failed with code ${code}`);
+    }
 }
 exports.failure = failure;
 //# sourceMappingURL=outcome.js.map
@@ -18834,6 +18874,14 @@ module.exports = require("assert");
 
 "use strict";
 module.exports = require("buffer");
+
+/***/ }),
+
+/***/ 2081:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
 
 /***/ }),
 

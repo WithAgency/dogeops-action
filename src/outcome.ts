@@ -73,9 +73,11 @@ export function warning(deployment: Deployment) {
     logger.warn(`View progress at: ${deployment.progress_url}`)
 }
 
-export function failure(code:number) {
+export function failure(code:number|null) {
     logger.error(FAILURE_DOGE);
     logger.error("");
     logger.error(`Dogefile failed to deploy`);
-    logger.error(`Request failed with code ${code}`)
+    if (code !== null) {
+        logger.error(`Request failed with code ${code}`)
+    }
 }
