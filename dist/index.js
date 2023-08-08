@@ -319,16 +319,23 @@ function main(args) {
             // 201 Created : new deployment triggered and taken into account
             (0, outcome_1.success)(res);
         }
-        else {
+        else if (statusCode === 200) {
             // 200 OK : busy with another deployment of the same context
             (0, outcome_1.warning)(res);
+        }
+        else {
+            // 400 Bad Request : invalid request
+            // 401 Unauthorized : invalid api key
+            // 404 Not Found : invalid api url
+            // 500 Internal Server Error : internal error
+            (0, outcome_1.failure)(statusCode);
         }
     });
 }
 main(getArgs()).catch(e => {
-    (0, outcome_1.failure)(null);
-    logger.error(e);
-    core.setFailed(e.message);
+    (0, outcome_1.failure)(undefined, e);
+    // logger.error(e);
+    core.setFailed("Failed to trigger deployment");
 });
 //# sourceMappingURL=index.js.map
 
@@ -418,12 +425,7 @@ class Log {
         if (level === "warning") {
             level = "warn";
         }
-        if (supportingData.length > 0) {
-            console[level](msg);
-        }
-        else {
-            console[level](msg);
-        }
+        console[level](msg);
     }
     debug(message) {
         if (this.verbose) {
@@ -517,7 +519,7 @@ const SUCCESS_DOGE = `
 ⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⡿⠟⠉⠀⠀⢀⣼⣿⣿⡿⠟⠁⠔⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠐⠺⠿⠿⠿⠿⠟⠛⠋⠁⠀⠀⠀⠀⠐⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 `;
-const FAILURE_DOGE = `
+const CONCERNED_DOGE = `
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡟⠋⠈⠙⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠤⢤⡀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠈⢇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠞⠀⠀⢠⡜⣦⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡃⠀⠀⠀⠀⠈⢷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠊⣠⠀⠀⠀⠀⢻⡘⡇
@@ -555,18 +557,27 @@ function success(deployment) {
 exports.success = success;
 function warning(deployment) {
     logger.warn(`Deployment ${deployment.id} succeeded with warnings`);
-    logger.warn(FAILURE_DOGE);
+    logger.warn(CONCERNED_DOGE);
     logger.warn("");
-    logger.warn("Wow! Such success!");
+    logger.warn(`There in a deployment for this Dogefile already running, with status ${deployment.status}`);
     logger.warn(`View progress at: ${deployment.progress_url}`);
 }
 exports.warning = warning;
-function failure(code) {
-    logger.error(FAILURE_DOGE);
+function failure(code, err) {
+    logger.error("Deployment failed");
+    logger.error(CONCERNED_DOGE);
     logger.error("");
     logger.error(`Dogefile failed to deploy`);
-    if (code !== null) {
+    if (code !== undefined) {
         logger.error(`Request failed with code ${code}`);
+    }
+    // if (err !== null) {
+    //     logger.error("Error message:");
+    //     logger.error(err);
+    // }
+    if (err !== undefined) {
+        logger.error("Error message:");
+        logger.error(err);
     }
 }
 exports.failure = failure;

@@ -26,7 +26,7 @@ const SUCCESS_DOGE: string = `
 ⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⡿⠟⠉⠀⠀⢀⣼⣿⣿⡿⠟⠁⠔⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠐⠺⠿⠿⠿⠿⠟⠛⠋⠁⠀⠀⠀⠀⠐⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 `
-const FAILURE_DOGE: string = `
+const CONCERNED_DOGE: string = `
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡟⠋⠈⠙⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠤⢤⡀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠈⢇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠞⠀⠀⢠⡜⣦⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡃⠀⠀⠀⠀⠈⢷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠊⣠⠀⠀⠀⠀⢻⡘⡇
@@ -61,23 +61,32 @@ export function success(deployment: Deployment) {
     logger.info(`Deployment ${deployment.id} succeeded`);
     logger.info(SUCCESS_DOGE);
     logger.info("");
-    logger.info("Wow! Such success!")
-    logger.info(`View progress at: ${deployment.progress_url}`)
+    logger.info("Wow! Such success!");
+    logger.info(`View progress at: ${deployment.progress_url}`);
 }
 
 export function warning(deployment: Deployment) {
     logger.warn(`Deployment ${deployment.id} succeeded with warnings`);
-    logger.warn(FAILURE_DOGE);
+    logger.warn(CONCERNED_DOGE);
     logger.warn("");
-    logger.warn("Wow! Such success!")
+    logger.warn(`There in a deployment for this Dogefile already running, with status ${deployment.status}`);
     logger.warn(`View progress at: ${deployment.progress_url}`)
 }
 
-export function failure(code:number|null) {
-    logger.error(FAILURE_DOGE);
+export function failure(code?: number, err?: Error) {
+    logger.error("Deployment failed");
+    logger.error(CONCERNED_DOGE);
     logger.error("");
     logger.error(`Dogefile failed to deploy`);
-    if (code !== null) {
-        logger.error(`Request failed with code ${code}`)
+    if (code !== undefined) {
+        logger.error(`Request failed with code ${code}`);
+    }
+    // if (err !== null) {
+    //     logger.error("Error message:");
+    //     logger.error(err);
+    // }
+    if (err !== undefined) {
+        logger.error("Error message:");
+        logger.error(err);
     }
 }

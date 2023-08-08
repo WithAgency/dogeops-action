@@ -78,12 +78,7 @@ class Log {
         if (level === "warning") {
             level = "warn";
         }
-        if (supportingData.length > 0) {
-            console[level](msg);
-        }
-        else {
-            console[level](msg);
-        }
+        console[level](msg);
     }
     debug(message) {
         if (this.verbose) {

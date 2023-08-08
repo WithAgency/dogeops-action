@@ -85,14 +85,20 @@ async function main(args: Args) {
     if (statusCode === 201) {
         // 201 Created : new deployment triggered and taken into account
         success(res)
-    } else {
+    } else if (statusCode === 200) {
         // 200 OK : busy with another deployment of the same context
         warning(res);
+    } else {
+        // 400 Bad Request : invalid request
+        // 401 Unauthorized : invalid api key
+        // 404 Not Found : invalid api url
+        // 500 Internal Server Error : internal error
+        failure(statusCode);
     }
 }
 
 main(getArgs()).catch(e => {
-    failure(null);
-    logger.error(e);
-    core.setFailed(e.message);
+    failure(undefined, e);
+    // logger.error(e);
+    core.setFailed("Failed to trigger deployment");
 });

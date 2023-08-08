@@ -79,11 +79,7 @@ class Log implements LogInterface {
         if (level === "warning") {
             level = "warn";
         }
-        if (supportingData.length > 0) {
-            console[level](msg);
-        } else {
-            console[level](msg);
-        }
+        console[level](msg);
     }
 
     public debug(message: string) {
