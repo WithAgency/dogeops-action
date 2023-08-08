@@ -11,7 +11,7 @@ export interface LogInterface {
 }
 
 function verbose() {
-    return core.getInput('VERBOSE') === "true";
+    return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 
 export function getLogger(name: string): LogInterface {

@@ -371,7 +371,7 @@ exports.Log = exports.getLogger = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const chalk_1 = __importDefault(__nccwpck_require__(7037));
 function verbose() {
-    return core.getInput('VERBOSE') === "true";
+    return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 function getLogger(name) {
     return new Log(name, verbose());

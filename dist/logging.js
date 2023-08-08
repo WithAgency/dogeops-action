@@ -30,7 +30,7 @@ exports.Log = exports.getLogger = void 0;
 const core = __importStar(require("@actions/core"));
 const chalk_1 = __importDefault(require("chalk"));
 function verbose() {
-    return core.getInput('VERBOSE') === "true";
+    return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 function getLogger(name) {
     return new Log(name, verbose());
