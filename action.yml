@@ -19,15 +19,12 @@ inputs:
     required: false
     default: false
 
-# runs:
-#   using: "composite"
-#   steps:
-#     - shell: bash
-#       run: |
-#         DOGEOPS_API_URL=${{ inputs.api_url }} \
-#         DOGEOPS_API_KEY=${{ inputs.api_key }} \
-#         "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}
-
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: "composite"
+  steps:
+    - id: node
+      uses: actions/setup-node@v3
+      with:
+        node-version: "18"
+    - shell: bash
+      run: node ${GITHUB_ACTION_PATH}/dist/index.js
