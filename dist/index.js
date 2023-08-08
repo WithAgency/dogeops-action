@@ -130,34 +130,21 @@ const logging_1 = __nccwpck_require__(9174);
 const logger = (0, logging_1.getLogger)("context");
 function getContext(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        let author;
         let payload;
-        let commit;
-        let remoteUrl;
         const githubContext = github.context;
+        const repo = new git_1.GitRepo(args.repo);
+        const commit = repo.getCommit();
+        const author = repo.getAuthor();
+        const remoteUrl = repo.getRemoteUrl();
         // no payload means we're running locally
         if (githubContext.payload.head_commit !== undefined) {
             logger.debug("getting context from github");
             payload = githubContext.payload;
-            commit = {
-                ref: githubContext.ref,
-                sha: githubContext.sha,
-                message: githubContext.payload.head_commit.message,
-            };
-            author = {
-                name: githubContext.payload.head_commit.author.name,
-                email: githubContext.payload.head_commit.author.email,
-            };
-            remoteUrl = githubContext.repo.repo;
         }
         else {
-            const repo = new git_1.GitRepo(args.repo);
             logger.debug("getting context from git repo");
             const ref = args.ref;
             payload = {};
-            commit = repo.getCommit();
-            author = repo.getAuthor();
-            remoteUrl = repo.getRemoteUrl();
         }
         return {
             event: args.event,
