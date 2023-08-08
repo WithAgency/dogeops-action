@@ -306,7 +306,7 @@ function run(args) {
             context,
             dogefile,
         };
-        logger.debug(`context: ${JSON.stringify(context, null, 2)}`);
+        logger.debug(`context: ${JSON.stringify(context)}`);
         const [response, statusCode] = (yield (0, api_1.post)('/back/api/paas/deployment/', requestData));
         return [response, statusCode];
     });
@@ -314,30 +314,14 @@ function run(args) {
 exports.run = run;
 function main(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const [res, statusCode] = yield run(args);
-            logger.debug(`response: ${JSON.stringify(res)}`);
-            if (res.status === "succeeded") {
-                if (statusCode === 201) {
-                    // 201 Created : new deployment triggered and taken into account
-                    (0, outcome_1.success)(res);
-                }
-                else {
-                    // 200 OK : busy with another deployment of the same context
-                    (0, outcome_1.warning)(res);
-                }
-            }
-            else if (res.status === "failed") {
-                // RIP
-                (0, outcome_1.failure)(statusCode);
-                core.setFailed("Deployment failed");
-            }
+        const [res, statusCode] = yield run(args);
+        if (statusCode === 201) {
+            // 201 Created : new deployment triggered and taken into account
+            (0, outcome_1.success)(res);
         }
-        catch (e) {
-            const err = e;
-            (0, outcome_1.failure)(null);
-            logger.error(err);
-            core.setFailed(err.message);
+        else {
+            // 200 OK : busy with another deployment of the same context
+            (0, outcome_1.warning)(res);
         }
     });
 }

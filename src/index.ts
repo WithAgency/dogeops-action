@@ -1,6 +1,7 @@
 import path from "path";
 import * as core from '@actions/core'
 import {existsSync, readFileSync} from "fs";
+
 const yaml = require('js-yaml');
 
 import {Context, getContext} from "./context";
@@ -58,8 +59,7 @@ function loadDogefile(dogefile: string): unknown {
         const data = yaml.load(readFileSync(dogefile, {encoding: 'utf-8'}));
         logger.debug(`dogefile: ${JSON.stringify(data)}`);
         return data;
-    }
-    catch (e) {
+    } catch (e) {
         logger.error(`failed to load ${dogefile}: ${e}`);
         throw e;
     }
@@ -74,34 +74,20 @@ export async function run(args: Args): Promise<[Deployment, number]> {
         context,
         dogefile,
     }
-    logger.debug(`context: ${JSON.stringify(context, null, 2)}`);
+    logger.debug(`context: ${JSON.stringify(context)}`);
     const [response, statusCode] = (await post('/back/api/paas/deployment/', requestData)) as [Deployment, number];
 
     return [response, statusCode];
 }
 
 async function main(args: Args) {
-    try {
-        const [res, statusCode] : [Deployment, number] = await run(args);
-        logger.debug(`response: ${JSON.stringify(res)}`);
-        if (res.status === "succeeded") {
-                if (statusCode === 201) {
-                    // 201 Created : new deployment triggered and taken into account
-                    success(res)
-                } else {
-                    // 200 OK : busy with another deployment of the same context
-                    warning(res);
-                }
-            } else if (res.status === "failed") {
-                // RIP
-                failure(statusCode);
-                core.setFailed("Deployment failed");
-            }
-    } catch (e) {
-        const err = e as Error;
-        failure(null);
-        logger.error(err);
-        core.setFailed(err.message)
+    const [res, statusCode]: [Deployment, number] = await run(args);
+    if (statusCode === 201) {
+        // 201 Created : new deployment triggered and taken into account
+        success(res)
+    } else {
+        // 200 OK : busy with another deployment of the same context
+        warning(res);
     }
 }
 
