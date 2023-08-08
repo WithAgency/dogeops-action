@@ -316,6 +316,7 @@ function main(args) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const [res, statusCode] = yield run(args);
+            logger.debug(`response: ${JSON.stringify(res)}`);
             if (res.status === "succeeded") {
                 if (statusCode === 201) {
                     // 201 Created : new deployment triggered and taken into account

@@ -83,6 +83,7 @@ export async function run(args: Args): Promise<[Deployment, number]> {
 async function main(args: Args) {
     try {
         const [res, statusCode] : [Deployment, number] = await run(args);
+        logger.debug(`response: ${JSON.stringify(res)}`);
         if (res.status === "succeeded") {
                 if (statusCode === 201) {
                     // 201 Created : new deployment triggered and taken into account
