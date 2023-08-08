@@ -1,3 +1,3 @@
-export const isGitHubAction = () => {
+export function isGitHubAction() {
     return process.env.GITHUB_ACTION === 'true';
 }

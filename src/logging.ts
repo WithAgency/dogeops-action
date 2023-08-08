@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import chalk from "chalk";
+import {isGitHubAction} from "./utils";
 
 export type LogLevel = "debug" | "info" | "warning" | "warn" | "error";
 

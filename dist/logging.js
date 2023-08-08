@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLogger = void 0;
 const core = __importStar(require("@actions/core"));
 const chalk_1 = __importDefault(require("chalk"));
+const utils_1 = require("./utils");
 //*
 // * Returns true if verbose logging is enabled
 // */
@@ -39,7 +40,7 @@ function verbose() {
 // * Returns true if running in a GitHub Action
 // */
 function getLogger(name) {
-    if (isGitHubAction()) {
+    if ((0, utils_1.isGitHubAction)()) {
         return new GitHubActionLog(name, verbose());
     }
     return new Log(name, verbose());
