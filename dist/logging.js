@@ -26,13 +26,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Log = exports.getLogger = void 0;
+exports.getLogger = void 0;
 const core = __importStar(require("@actions/core"));
 const chalk_1 = __importDefault(require("chalk"));
+//*
+// * Returns true if verbose logging is enabled
+// */
 function verbose() {
     return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
+//*
+// * Returns true if running in a GitHub Action
+// */
 function getLogger(name) {
+    if (isGitHubAction()) {
+        return new GitHubActionLog(name, verbose());
+    }
     return new Log(name, verbose());
 }
 exports.getLogger = getLogger;
@@ -40,25 +49,23 @@ const logColors = {
     debug: chalk_1.default.gray,
     info: chalk_1.default.white,
     warn: chalk_1.default.yellow,
+    warning: chalk_1.default.yellow,
     error: chalk_1.default.red,
 };
 const logPrefixes = {
     debug: "[DBG]",
     info: "[INF]",
     warn: "[WRN]",
+    warning: "[WRN]",
     error: "[ERR]",
 };
-function splitLines(t) {
-    return t.split(/\r\n|\r|\n/);
-}
 class Log {
     constructor(name, verbose) {
         this.verbose = verbose;
         this.name = name;
     }
     formatMessage(level, message) {
-        let msg = `${logPrefixes[level]} ${message}`;
-        return msg;
+        return `${logPrefixes[level]} ${message}`;
     }
     logMessage(level, message, ...supportingData) {
         const lines = [];
@@ -67,30 +74,69 @@ class Log {
         }
         const color = logColors[level];
         const msg = color(lines.join("\n"));
+        if (level === "warning") {
+            level = "warn";
+        }
         if (supportingData.length > 0) {
-            console[level](msg, ...supportingData);
+            console[level](msg);
         }
         else {
             console[level](msg);
         }
     }
-    debug(message, ...supportingData) {
+    debug(message) {
         if (this.verbose) {
-            this.logMessage("debug", message, ...supportingData);
+            this.logMessage("debug", message);
         }
     }
-    info(message, ...supportingData) {
-        this.logMessage("info", message, ...supportingData);
+    info(message) {
+        this.logMessage("info", message);
     }
-    warn(message, ...supportingData) {
-        this.logMessage("warn", message, ...supportingData);
+    warn(message) {
+        this.logMessage("warn", message);
     }
-    error(message, ...supportingData) {
+    error(message) {
         if (message instanceof Error) {
             message = message.stack || message.message;
         }
-        this.logMessage("error", message, ...supportingData);
+        this.logMessage("error", message);
     }
 }
-exports.Log = Log;
+class GitHubActionLog {
+    constructor(name, verbose) {
+        this.name = name;
+        this.verbose = verbose;
+    }
+    formatMessage(level, message) {
+        return `${logPrefixes[level]} ${message}`;
+    }
+    logMessage(level, message) {
+        const lines = [];
+        for (let line of message.split("\n")) {
+            lines.push(this.formatMessage(level, line));
+        }
+        const msg = lines.join("\n");
+        if (level === "warn") {
+            level = "warning";
+        }
+        core[level](msg);
+    }
+    debug(message) {
+        if (this.verbose) {
+            this.logMessage("debug", message);
+        }
+    }
+    info(message) {
+        this.logMessage("info", message);
+    }
+    warn(message) {
+        this.logMessage("warn", message);
+    }
+    error(message) {
+        if (message instanceof Error) {
+            message = message.stack || message.message;
+        }
+        this.logMessage("error", message);
+    }
+}
 //# sourceMappingURL=logging.js.map

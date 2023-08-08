@@ -46,8 +46,6 @@ function getArgs(): Args {
     return args;
 }
 
-const args: Args = getArgs();
-
 export type Deployment = {
     id: number,
     status: string,
@@ -82,19 +80,32 @@ export async function run(args: Args): Promise<[Deployment, number]> {
     return [response, statusCode];
 }
 
-run(args).then(([res, statusCode]) => {
-    if (res.status === "succeeded") {
-        if (statusCode === 201) {
-            success(res)
-        } else {
-            warning(res);
-        }
-    } else if (res.status === "failed") {
-        failure(statusCode);
-        core.setFailed("Deployment failed");
+async function main(args: Args) {
+    try {
+        const [res, statusCode] : [Deployment, number] = await run(args);
+        if (res.status === "succeeded") {
+                if (statusCode === 201) {
+                    // 201 Created : new deployment triggered and taken into account
+                    success(res)
+                } else {
+                    // 200 OK : busy with another deployment of the same context
+                    warning(res);
+                }
+            } else if (res.status === "failed") {
+                // RIP
+                failure(statusCode);
+                core.setFailed("Deployment failed");
+            }
+    } catch (e) {
+        const err = e as Error;
+        failure(null);
+        logger.error(err);
+        core.setFailed(err.message)
     }
-}).catch(err => {
+}
+
+main(getArgs()).catch(e => {
     failure(null);
-    logger.error(err);
-    core.setFailed(err.message)
+    logger.error(e);
+    core.setFailed(e.message);
 });
