@@ -1,6 +1,12 @@
 import {GitRepoInfo} from "git-repo-info";
 import {getLogger} from "./logging";
 const { execSync } = require('child_process');
+
+/**
+ * Run a shell command in a given directory
+ * @param cwd - working directory
+ * @param cmd - command to run
+ */
 const shell = (cwd: string, cmd: string) => {
     const command = `cd ${cwd} && ${cmd}`;
     return execSync(command, {encoding: 'utf8'}).trimEnd();
@@ -10,17 +16,26 @@ const getRepoInfo = require('git-repo-info');
 
 const logger = getLogger("git");
 
+/**
+ * Git commit author
+ */
 export type Author = {
     name: string,
     email: string,
 }
 
+/**
+ * Git commit
+ */
 export type Commit = {
     ref: string,
     sha: string,
     message: string,
 }
 
+/**
+ * Git repository helper
+ */
 export class GitRepo {
     private readonly info: GitRepoInfo;
     private readonly repoDir: string;
@@ -36,12 +51,12 @@ export class GitRepo {
         return [name, email.slice(0, -1)];
     }
 
-    getRemoteUrl(): string {
+    public getRemoteUrl(): string {
         const remote = shell(this.repoDir, "git config --get remote.origin.url");
         return remote.trim();
     }
 
-    getAuthor(): Author {
+    public getAuthor(): Author {
         const [name, email] = this.splitAuthor(this.info.author);
 
         const author: Author = {
@@ -52,7 +67,7 @@ export class GitRepo {
         return author;
     }
 
-    getCommit(): Commit {
+    public getCommit(): Commit {
         // return the full refs/heads/branch name
         const ref = shell(this.repoDir, "git symbolic-ref HEAD");
 

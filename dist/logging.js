@@ -30,15 +30,17 @@ exports.getLogger = void 0;
 const core = __importStar(require("@actions/core"));
 const chalk_1 = __importDefault(require("chalk"));
 const utils_1 = require("./utils");
-//*
-// * Returns true if verbose logging is enabled
-// */
+/**
+ * Returns true if verbose logging is enabled
+ */
 function verbose() {
     return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
-//*
-// * Returns true if running in a GitHub Action
-// */
+/**
+ * Get a logger for the given name. If running in a GitHub Action, the logger
+ * will use the GitHub Actions logging API.
+ * @param name - logger name
+ */
 function getLogger(name) {
     if ((0, utils_1.isGitHubAction)()) {
         return new GitHubActionLog(name, verbose());
@@ -46,6 +48,9 @@ function getLogger(name) {
     return new Log(name, verbose());
 }
 exports.getLogger = getLogger;
+/**
+ * Log messages are colored based on their level
+ */
 const logColors = {
     debug: chalk_1.default.gray,
     info: chalk_1.default.white,
@@ -53,6 +58,9 @@ const logColors = {
     warning: chalk_1.default.yellow,
     error: chalk_1.default.red,
 };
+/**
+ * Log messages are prefixed based on their level
+ */
 const logPrefixes = {
     debug: "[DBG]",
     info: "[INF]",

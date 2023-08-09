@@ -35,11 +35,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.post = exports.getApiUrl = void 0;
+exports.post = void 0;
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const core = __importStar(require("@actions/core"));
 const logging_1 = require("./logging");
 const logger = (0, logging_1.getLogger)("api");
+/**
+ * Get the base URL for the API
+ */
 function getBaseUrl() {
     let baseUrl = core.getInput('api_url');
     if (!baseUrl) {
@@ -50,10 +53,17 @@ function getBaseUrl() {
     }
     return baseUrl;
 }
+/**
+ * Get the full URL for the given path
+ * @param path - path to the API endpoint
+ */
 function getApiUrl(path) {
     return `${getBaseUrl()}${path}`;
 }
-exports.getApiUrl = getApiUrl;
+/**
+ * Get the authentication headers
+ * @param otherHeaders - additional headers to include
+ */
 function authHeaders(otherHeaders = {}) {
     const apiKey = core.getInput('api_key');
     if (!apiKey) {
@@ -61,6 +71,11 @@ function authHeaders(otherHeaders = {}) {
     }
     return Object.assign(Object.assign({}, otherHeaders), { 'X-Api-Key': apiKey });
 }
+/**
+ * Perform a POST request to the API
+ * @param path
+ * @param data
+ */
 const post = (path, data) => __awaiter(void 0, void 0, void 0, function* () {
     const body = JSON.stringify(data);
     logger.debug(`POST ${path} ${body}`);

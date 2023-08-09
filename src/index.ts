@@ -12,6 +12,9 @@ import {failure, success, warning} from "./outcome";
 
 const logger = getLogger("index");
 
+/**
+ * Action arguments
+ */
 export interface Args {
     api_url: string,
     api_key: string,
@@ -21,6 +24,9 @@ export interface Args {
     ref: string,
 }
 
+/**
+ * Get the action arguments from the environment and defined inputs.
+ */
 function getArgs(): Args {
     let repoDir = process.env.GITHUB_WORKSPACE;
     logger.debug(`GITHUB_WORKSPACE: ${repoDir}`)
@@ -47,13 +53,19 @@ function getArgs(): Args {
     return args;
 }
 
+/**
+ * Deployment status, returned by the API
+ */
 export type Deployment = {
     id: number,
     status: string,
     progress_url: string,
 }
 
-
+/**
+ * Load the dogefile
+ * @param dogefile - path to the dogefile
+ */
 function loadDogefile(dogefile: string): unknown {
     try {
         const data = yaml.load(readFileSync(dogefile, {encoding: 'utf-8'}));
@@ -65,7 +77,10 @@ function loadDogefile(dogefile: string): unknown {
     }
 }
 
-
+/**
+ * Run the action
+ * @param args - action arguments
+ */
 export async function run(args: Args): Promise<[Deployment, number]> {
     const context: Context = await getContext(args);
     const dogefile = loadDogefile(args.dogefile);
@@ -80,6 +95,10 @@ export async function run(args: Args): Promise<[Deployment, number]> {
     return [response, statusCode];
 }
 
+/**
+ * Main entry point
+ * @param args - action arguments
+ */
 async function main(args: Args) {
     const [res, statusCode]: [Deployment, number] = await run(args);
     if (statusCode === 201) {

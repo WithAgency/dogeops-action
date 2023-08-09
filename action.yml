@@ -17,7 +17,7 @@ inputs:
   verbose:
     description: "Verbose output"
     required: false
-    default: false
+    default: true
 
 runs:
   using: "composite"
@@ -26,5 +26,6 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: "18"
+        cache: "npm"
     - shell: bash
       run: node ${GITHUB_ACTION_PATH}/dist/index.js

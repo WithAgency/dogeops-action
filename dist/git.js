@@ -3,12 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GitRepo = void 0;
 const logging_1 = require("./logging");
 const { execSync } = require('child_process');
+/**
+ * Run a shell command in a given directory
+ * @param cwd - working directory
+ * @param cmd - command to run
+ */
 const shell = (cwd, cmd) => {
     const command = `cd ${cwd} && ${cmd}`;
     return execSync(command, { encoding: 'utf8' }).trimEnd();
 };
 const getRepoInfo = require('git-repo-info');
 const logger = (0, logging_1.getLogger)("git");
+/**
+ * Git repository helper
+ */
 class GitRepo {
     constructor(repoDir) {
         this.repoDir = repoDir;

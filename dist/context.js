@@ -37,23 +37,23 @@ const github = __importStar(require("@actions/github"));
 const git_1 = require("./git");
 const logging_1 = require("./logging");
 const logger = (0, logging_1.getLogger)("context");
+/**
+ * Get the action context from the project's git repository. If the action is
+ * running in a GitHub workflow, the context is also populated with the GitHub
+ * event payload.
+ * @param args
+ */
 function getContext(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        let payload;
         const githubContext = github.context;
         const repo = new git_1.GitRepo(args.repo);
         const commit = repo.getCommit();
         const author = repo.getAuthor();
         const remoteUrl = repo.getRemoteUrl();
-        // no payload means we're running locally
+        let payload = {};
         if (githubContext.payload.head_commit !== undefined) {
             logger.debug("getting context from github");
             payload = githubContext.payload;
-        }
-        else {
-            logger.debug("getting context from git repo");
-            const ref = args.ref;
-            payload = {};
         }
         return {
             event: args.event,

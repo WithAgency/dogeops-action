@@ -42,11 +42,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.post = exports.getApiUrl = void 0;
+exports.post = void 0;
 const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
 const core = __importStar(__nccwpck_require__(2186));
 const logging_1 = __nccwpck_require__(9174);
 const logger = (0, logging_1.getLogger)("api");
+/**
+ * Get the base URL for the API
+ */
 function getBaseUrl() {
     let baseUrl = core.getInput('api_url');
     if (!baseUrl) {
@@ -57,10 +60,17 @@ function getBaseUrl() {
     }
     return baseUrl;
 }
+/**
+ * Get the full URL for the given path
+ * @param path - path to the API endpoint
+ */
 function getApiUrl(path) {
     return `${getBaseUrl()}${path}`;
 }
-exports.getApiUrl = getApiUrl;
+/**
+ * Get the authentication headers
+ * @param otherHeaders - additional headers to include
+ */
 function authHeaders(otherHeaders = {}) {
     const apiKey = core.getInput('api_key');
     if (!apiKey) {
@@ -68,6 +78,11 @@ function authHeaders(otherHeaders = {}) {
     }
     return Object.assign(Object.assign({}, otherHeaders), { 'X-Api-Key': apiKey });
 }
+/**
+ * Perform a POST request to the API
+ * @param path
+ * @param data
+ */
 const post = (path, data) => __awaiter(void 0, void 0, void 0, function* () {
     const body = JSON.stringify(data);
     logger.debug(`POST ${path} ${body}`);
@@ -128,23 +143,23 @@ const github = __importStar(__nccwpck_require__(5438));
 const git_1 = __nccwpck_require__(7592);
 const logging_1 = __nccwpck_require__(9174);
 const logger = (0, logging_1.getLogger)("context");
+/**
+ * Get the action context from the project's git repository. If the action is
+ * running in a GitHub workflow, the context is also populated with the GitHub
+ * event payload.
+ * @param args
+ */
 function getContext(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        let payload;
         const githubContext = github.context;
         const repo = new git_1.GitRepo(args.repo);
         const commit = repo.getCommit();
         const author = repo.getAuthor();
         const remoteUrl = repo.getRemoteUrl();
-        // no payload means we're running locally
+        let payload = {};
         if (githubContext.payload.head_commit !== undefined) {
             logger.debug("getting context from github");
             payload = githubContext.payload;
-        }
-        else {
-            logger.debug("getting context from git repo");
-            const ref = args.ref;
-            payload = {};
         }
         return {
             event: args.event,
@@ -169,12 +184,20 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GitRepo = void 0;
 const logging_1 = __nccwpck_require__(9174);
 const { execSync } = __nccwpck_require__(2081);
+/**
+ * Run a shell command in a given directory
+ * @param cwd - working directory
+ * @param cmd - command to run
+ */
 const shell = (cwd, cmd) => {
     const command = `cd ${cwd} && ${cmd}`;
     return execSync(command, { encoding: 'utf8' }).trimEnd();
 };
 const getRepoInfo = __nccwpck_require__(7640);
 const logger = (0, logging_1.getLogger)("git");
+/**
+ * Git repository helper
+ */
 class GitRepo {
     constructor(repoDir) {
         this.repoDir = repoDir;
@@ -264,6 +287,9 @@ const logging_1 = __nccwpck_require__(9174);
 const api_1 = __nccwpck_require__(2491);
 const outcome_1 = __nccwpck_require__(2704);
 const logger = (0, logging_1.getLogger)("index");
+/**
+ * Get the action arguments from the environment and defined inputs.
+ */
 function getArgs() {
     let repoDir = process.env.GITHUB_WORKSPACE;
     logger.debug(`GITHUB_WORKSPACE: ${repoDir}`);
@@ -287,6 +313,10 @@ function getArgs() {
     }
     return args;
 }
+/**
+ * Load the dogefile
+ * @param dogefile - path to the dogefile
+ */
 function loadDogefile(dogefile) {
     try {
         const data = yaml.load((0, fs_1.readFileSync)(dogefile, { encoding: 'utf-8' }));
@@ -298,6 +328,10 @@ function loadDogefile(dogefile) {
         throw e;
     }
 }
+/**
+ * Run the action
+ * @param args - action arguments
+ */
 function run(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const context = yield (0, context_1.getContext)(args);
@@ -312,6 +346,10 @@ function run(args) {
     });
 }
 exports.run = run;
+/**
+ * Main entry point
+ * @param args - action arguments
+ */
 function main(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const [res, statusCode] = yield run(args);
@@ -377,15 +415,17 @@ exports.getLogger = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const chalk_1 = __importDefault(__nccwpck_require__(7037));
 const utils_1 = __nccwpck_require__(4729);
-//*
-// * Returns true if verbose logging is enabled
-// */
+/**
+ * Returns true if verbose logging is enabled
+ */
 function verbose() {
     return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
-//*
-// * Returns true if running in a GitHub Action
-// */
+/**
+ * Get a logger for the given name. If running in a GitHub Action, the logger
+ * will use the GitHub Actions logging API.
+ * @param name - logger name
+ */
 function getLogger(name) {
     if ((0, utils_1.isGitHubAction)()) {
         return new GitHubActionLog(name, verbose());
@@ -393,6 +433,9 @@ function getLogger(name) {
     return new Log(name, verbose());
 }
 exports.getLogger = getLogger;
+/**
+ * Log messages are colored based on their level
+ */
 const logColors = {
     debug: chalk_1.default.gray,
     info: chalk_1.default.white,
@@ -400,6 +443,9 @@ const logColors = {
     warning: chalk_1.default.yellow,
     error: chalk_1.default.red,
 };
+/**
+ * Log messages are prefixed based on their level
+ */
 const logPrefixes = {
     debug: "[DBG]",
     info: "[INF]",
@@ -547,6 +593,10 @@ const CONCERNED_DOGE = `
 ⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠲⠤⣤⣤⣤⣄⠀⠀⠀⠀⠀⠀⠀⢠⣤⣤⠤⠴⠒⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 `;
 const logger = (0, logging_1.getLogger)("outcome");
+/**
+ * Log a successful deployment
+ * @param deployment Deployment object
+ */
 function success(deployment) {
     logger.info(`Deployment ${deployment.id} succeeded`);
     logger.info(SUCCESS_DOGE);
@@ -555,14 +605,23 @@ function success(deployment) {
     logger.info(`View progress at: ${deployment.progress_url}`);
 }
 exports.success = success;
+/**
+ * Log a deployment that succeeded with warnings
+ * @param deployment Deployment object
+ */
 function warning(deployment) {
     logger.warn(`Deployment ${deployment.id} succeeded with warnings`);
     logger.warn(CONCERNED_DOGE);
     logger.warn("");
-    logger.warn(`There in a deployment for this Dogefile already running, with status ${deployment.status}`);
+    logger.warn(`There is a deployment for this Dogefile already running in this environment, with status ${deployment.status}`);
     logger.warn(`View progress at: ${deployment.progress_url}`);
 }
 exports.warning = warning;
+/**
+ * Log a deployment that failed
+ * @param code HTTP status code
+ * @param err Error object
+ */
 function failure(code, err) {
     logger.error("Deployment failed");
     logger.error(CONCERNED_DOGE);
@@ -571,10 +630,6 @@ function failure(code, err) {
     if (code !== undefined) {
         logger.error(`Request failed with code ${code}`);
     }
-    // if (err !== null) {
-    //     logger.error("Error message:");
-    //     logger.error(err);
-    // }
     if (err !== undefined) {
         logger.error("Error message:");
         logger.error(err);
@@ -592,6 +647,9 @@ exports.failure = failure;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.isGitHubAction = void 0;
+/**
+ * Returns true if the current environment is a GitHub Action.
+ */
 function isGitHubAction() {
     return process.env.GITHUB_ACTION === 'true';
 }

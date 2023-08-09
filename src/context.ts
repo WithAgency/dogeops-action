@@ -6,7 +6,9 @@ import {getLogger} from "./logging";
 
 const logger = getLogger("context");
 
-
+/**
+ * Action context
+ */
 export type Context = {
     event: string,
     repo: string,
@@ -15,8 +17,13 @@ export type Context = {
     payload: unknown,
 }
 
+/**
+ * Get the action context from the project's git repository. If the action is
+ * running in a GitHub workflow, the context is also populated with the GitHub
+ * event payload.
+ * @param args
+ */
 export async function getContext(args: Args): Promise<Context> {
-    let payload: unknown;
 
     const githubContext = github.context;
 
@@ -25,17 +32,11 @@ export async function getContext(args: Args): Promise<Context> {
     const author: Author = repo.getAuthor();
     const remoteUrl: string = repo.getRemoteUrl();
 
-    // no payload means we're running locally
+    let payload: unknown = {};
     if (githubContext.payload.head_commit !== undefined) {
         logger.debug("getting context from github")
         payload = githubContext.payload;
-    } else {
-        logger.debug("getting context from git repo")
-
-        const ref = args.ref;
-        payload = {};
     }
-
 
     return {
         event: args.event,

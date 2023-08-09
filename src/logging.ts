@@ -12,16 +12,18 @@ export interface LogInterface {
     error: (error: string | Error) => void;
 }
 
-//*
-// * Returns true if verbose logging is enabled
-// */
+/**
+ * Returns true if verbose logging is enabled
+ */
 function verbose() {
     return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 
-//*
-// * Returns true if running in a GitHub Action
-// */
+/**
+ * Get a logger for the given name. If running in a GitHub Action, the logger
+ * will use the GitHub Actions logging API.
+ * @param name - logger name
+ */
 export function getLogger(name: string): LogInterface {
     if (isGitHubAction()) {
         return new GitHubActionLog(name, verbose());
@@ -29,6 +31,9 @@ export function getLogger(name: string): LogInterface {
     return new Log(name, verbose());
 }
 
+/**
+ * Log messages are colored based on their level
+ */
 const logColors = {
     debug: chalk.gray,
     info: chalk.white,
@@ -37,6 +42,9 @@ const logColors = {
     error: chalk.red,
 }
 
+/**
+ * Log messages are prefixed based on their level
+ */
 const logPrefixes = {
     debug: "[DBG]",
     info: "[INF]",

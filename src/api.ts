@@ -4,6 +4,9 @@ import {getLogger} from "./logging";
 
 const logger = getLogger("api");
 
+/**
+ * Get the base URL for the API
+ */
 function getBaseUrl() {
     let baseUrl = core.getInput('api_url');
     if (!baseUrl) {
@@ -15,10 +18,18 @@ function getBaseUrl() {
     return baseUrl;
 }
 
-export function getApiUrl(path: string) {
+/**
+ * Get the full URL for the given path
+ * @param path - path to the API endpoint
+ */
+function getApiUrl(path: string) {
     return `${getBaseUrl()}${path}`;
 }
 
+/**
+ * Get the authentication headers
+ * @param otherHeaders - additional headers to include
+ */
 function authHeaders(otherHeaders: Record<string, string> = {}) {
     const apiKey = core.getInput('api_key');
     if (!apiKey) {
@@ -30,6 +41,11 @@ function authHeaders(otherHeaders: Record<string, string> = {}) {
     };
 }
 
+/**
+ * Perform a POST request to the API
+ * @param path
+ * @param data
+ */
 export const post = async (path: string, data: unknown) => {
 
     const body = JSON.stringify(data);
