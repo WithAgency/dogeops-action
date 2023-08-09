@@ -64,10 +64,8 @@ export class GitRepo {
         if (this.info?.committer) {
             [name, email] = this.splitAuthor(this.info.committer);
         } else {
-            [name, email] =
-                this.splitAuthor(
-                    shell(this.repoDir, "git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//'")
-                )
+            name = shell(this.repoDir, "git --no-pager log -1 --pretty=format:'%an'");
+            email = shell(this.repoDir, "git --no-pager log -1 --pretty=format:'%ae'");
         }
 
         const author: Author = {

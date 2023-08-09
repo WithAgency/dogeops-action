@@ -214,20 +214,20 @@ class GitRepo {
     }
     getAuthor() {
         var _a;
-        logger.debug(`author: ${JSON.stringify(this.info.author)}`);
+        logger.debug(`author: ${JSON.stringify(this.info.committer)}`);
         let name, email;
-        if ((_a = this.info) === null || _a === void 0 ? void 0 : _a.author) {
-            [name, email] = this.splitAuthor(this.info.author);
+        if ((_a = this.info) === null || _a === void 0 ? void 0 : _a.committer) {
+            [name, email] = this.splitAuthor(this.info.committer);
         }
         else {
-            [name, email] =
-                this.splitAuthor(shell(this.repoDir, "git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//'"));
+            name = shell(this.repoDir, "git --no-pager log -1 --pretty=format:'%an'");
+            email = shell(this.repoDir, "git --no-pager log -1 --pretty=format:'%ae'");
         }
         const author = {
             name,
             email,
         };
-        logger.debug(`author: ${JSON.stringify(author)}`);
+        logger.debug(`computed author: ${JSON.stringify(author)}`);
         return author;
     }
     getCommit() {
