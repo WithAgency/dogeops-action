@@ -34,7 +34,9 @@ const utils_1 = require("./utils");
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('verbose').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    const isVerbose = core.getInput('verbose').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    console.log(`Verbose logging: ${isVerbose}`);
+    return isVerbose;
 }
 /**
  * Get a logger for the given name. If running in a GitHub Action, the logger

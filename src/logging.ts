@@ -16,7 +16,9 @@ export interface LogInterface {
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('verbose').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    const isVerbose =  core.getInput('verbose').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    console.log(`Verbose logging: ${isVerbose}`);
+    return isVerbose;
 }
 
 /**
