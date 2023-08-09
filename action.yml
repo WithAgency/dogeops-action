@@ -33,5 +33,15 @@ runs:
         echo "  api_url: ${{ inputs.api_url }}"
         echo "  api_key: ${{ inputs.api_key }}"
         echo "  verbose: ${{ inputs.verbose }}"
+        echo "From environment"
+        echo "  INPUT_DOGEFILE: ${INPUT_DOGEFILE}"
+        echo "  INPUT_API_URL: ${INPUT_API_URL}"
+        echo "  INPUT_API_KEY: ${INPUT_API_KEY}"
+        echo "  INPUT_VERBOSE: ${INPUT_VERBOSE}"
+
+        echo "  INPUT_dogefile: ${INPUT_dogefile}"
+        echo "  INPUT_api_url: ${INPUT_api_url}"
+        echo "  INPUT_api_key: ${INPUT_api_key}"
+        echo "  INPUT_verbose: ${INPUT_verbose}"
     - shell: bash
       run: node ${GITHUB_ACTION_PATH}/dist/index.js
