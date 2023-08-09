@@ -16,7 +16,6 @@ inputs:
   # other args to pass to the script
   verbose:
     description: "Verbose output"
-    required: false
     default: true
 
 runs:
