@@ -16,7 +16,7 @@ export interface LogInterface {
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('verbose') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    return core.getBooleanInput('verbose') || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 
 /**

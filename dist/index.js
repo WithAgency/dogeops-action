@@ -428,7 +428,7 @@ const utils_1 = __nccwpck_require__(4729);
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('verbose') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    return core.getBooleanInput('verbose') || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 /**
  * Get a logger for the given name. If running in a GitHub Action, the logger
