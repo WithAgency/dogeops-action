@@ -1,6 +1,7 @@
 import {GitRepoInfo} from "git-repo-info";
 import {getLogger} from "./logging";
-const { execSync } = require('child_process');
+
+const {execSync} = require('child_process');
 
 /**
  * Run a shell command in a given directory
@@ -57,13 +58,23 @@ export class GitRepo {
     }
 
     public getAuthor(): Author {
-        const [name, email] = this.splitAuthor(this.info.author);
+        logger.debug(`author: ${JSON.stringify(this.info.committer)}`)
+
+        let name: string, email: string;
+        if (this.info?.committer) {
+            [name, email] = this.splitAuthor(this.info.committer);
+        } else {
+            [name, email] =
+                this.splitAuthor(
+                    shell(this.repoDir, "git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//'")
+                )
+        }
 
         const author: Author = {
-            name: name,
-            email: email,
+            name,
+            email,
         }
-        logger.debug(`author: ${JSON.stringify(author)}`);
+        logger.debug(`computed author: ${JSON.stringify(author)}`);
         return author;
     }
 

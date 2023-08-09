@@ -213,10 +213,19 @@ class GitRepo {
         return remote.trim();
     }
     getAuthor() {
-        const [name, email] = this.splitAuthor(this.info.author);
+        var _a;
+        logger.debug(`author: ${JSON.stringify(this.info.author)}`);
+        let name, email;
+        if ((_a = this.info) === null || _a === void 0 ? void 0 : _a.author) {
+            [name, email] = this.splitAuthor(this.info.author);
+        }
+        else {
+            [name, email] =
+                this.splitAuthor(shell(this.repoDir, "git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//'"));
+        }
         const author = {
-            name: name,
-            email: email,
+            name,
+            email,
         };
         logger.debug(`author: ${JSON.stringify(author)}`);
         return author;
@@ -419,7 +428,7 @@ const utils_1 = __nccwpck_require__(4729);
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    return core.getInput('verbose') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 /**
  * Get a logger for the given name. If running in a GitHub Action, the logger
@@ -427,10 +436,11 @@ function verbose() {
  * @param name - logger name
  */
 function getLogger(name) {
+    const verboseLogging = verbose();
     if ((0, utils_1.isGitHubAction)()) {
-        return new GitHubActionLog(name, verbose());
+        return new GitHubActionLog(name, verboseLogging);
     }
-    return new Log(name, verbose());
+    return new Log(name, verboseLogging);
 }
 exports.getLogger = getLogger;
 /**

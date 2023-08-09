@@ -16,7 +16,7 @@ export interface LogInterface {
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    return core.getInput('verbose') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 
 /**
@@ -25,10 +25,11 @@ function verbose() {
  * @param name - logger name
  */
 export function getLogger(name: string): LogInterface {
+    const verboseLogging = verbose();
     if (isGitHubAction()) {
-        return new GitHubActionLog(name, verbose());
+        return new GitHubActionLog(name, verboseLogging);
     }
-    return new Log(name, verbose());
+    return new Log(name, verboseLogging);
 }
 
 /**

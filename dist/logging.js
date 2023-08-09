@@ -34,7 +34,7 @@ const utils_1 = require("./utils");
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    return core.getInput('VERBOSE') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    return core.getInput('verbose') === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
 }
 /**
  * Get a logger for the given name. If running in a GitHub Action, the logger
@@ -42,10 +42,11 @@ function verbose() {
  * @param name - logger name
  */
 function getLogger(name) {
+    const verboseLogging = verbose();
     if ((0, utils_1.isGitHubAction)()) {
-        return new GitHubActionLog(name, verbose());
+        return new GitHubActionLog(name, verboseLogging);
     }
-    return new Log(name, verbose());
+    return new Log(name, verboseLogging);
 }
 exports.getLogger = getLogger;
 /**

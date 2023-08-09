@@ -32,10 +32,19 @@ class GitRepo {
         return remote.trim();
     }
     getAuthor() {
-        const [name, email] = this.splitAuthor(this.info.author);
+        var _a;
+        logger.debug(`author: ${JSON.stringify(this.info.author)}`);
+        let name, email;
+        if ((_a = this.info) === null || _a === void 0 ? void 0 : _a.author) {
+            [name, email] = this.splitAuthor(this.info.author);
+        }
+        else {
+            [name, email] =
+                this.splitAuthor(shell(this.repoDir, "git var GIT_COMMITTER_IDENT | sed -r 's/( [^ ]+){2}$//'"));
+        }
         const author = {
-            name: name,
-            email: email,
+            name,
+            email,
         };
         logger.debug(`author: ${JSON.stringify(author)}`);
         return author;
