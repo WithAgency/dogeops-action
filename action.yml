@@ -25,5 +25,13 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: "18"
+    - id: debug
+      shell: bash
+      run: |
+        echo "DogeOps Action"
+        echo "  dogefile: ${{ inputs.dogefile }}"
+        echo "  api_url: ${{ inputs.api_url }}"
+        echo "  api_key: ${{ inputs.api_key }}"
+        echo "  verbose: ${{ inputs.verbose }}"
     - shell: bash
       run: node ${GITHUB_ACTION_PATH}/dist/index.js
