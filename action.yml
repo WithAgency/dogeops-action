@@ -43,5 +43,13 @@ runs:
         echo "  INPUT_api_url: ${INPUT_api_url}"
         echo "  INPUT_api_key: ${INPUT_api_key}"
         echo "  INPUT_verbose: ${INPUT_verbose}"
+
+        echo "environment"
+        env | grep INPUT
     - shell: bash
-      run: node ${GITHUB_ACTION_PATH}/dist/index.js
+      run: |
+        node ${GITHUB_ACTION_PATH}/dist/index.js
+          --dogefile "${{ inputs.dogefile }}"
+          --api-url "${{ inputs.api_url }}"
+          --api-key "${{ inputs.api_key }}"
+          ${{ inputs.verbose == 'true' && '--verbose' || '' }}

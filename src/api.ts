@@ -5,6 +5,15 @@ import {getLogger} from "./logging";
 const logger = getLogger("api");
 
 /**
+ * Deployment status
+ */
+export type Deployment = {
+    id: number,
+    status: string,
+    progress_url: string,
+}
+
+/**
  * Get the base URL for the API
  */
 function getBaseUrl() {

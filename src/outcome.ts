@@ -1,5 +1,5 @@
-import {Deployment} from "./index";
 import {getLogger} from "./logging";
+import {Deployment} from "./api";
 
 const SUCCESS_DOGE: string = `
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⣀⠀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀

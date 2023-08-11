@@ -3,11 +3,13 @@ import * as core from '@actions/core'
 import {existsSync, readFileSync} from "fs";
 
 const yaml = require('js-yaml');
+const { Command } = require("commander");
 
 import {Context, getContext} from "./context";
 import {getLogger} from "./logging";
-import {post} from "./api";
+import {Deployment, post} from "./api";
 import {failure, success, warning} from "./outcome";
+import {OptionValues} from "commander";
 
 
 const logger = getLogger("index");
@@ -24,10 +26,34 @@ export interface Args {
     ref: string,
 }
 
+const program = new Command();
+
+
+/**
+ * Retrieve the version of the package from the package.json file
+ */
+function getPackageVersion() {
+  const packageJson = require("../package.json");
+  return packageJson.version;
+}
+
+program
+    .version(getPackageVersion())
+    .description("A CLI to start a DogeOps deployment")
+    .option("--api-url <url>", "URL of the DogeOps API")
+    .option("--api-key <key>", "API key to use")
+    .option("--dogefile <path>", "Path to the Dogefile to use")
+    .option("-v, --verbose", "Verbose output")
+    .parse(process.argv);
+
+
+const options = program.opts();
+
+
 /**
  * Get the action arguments from the environment and defined inputs.
  */
-function getArgs(): Args {
+function getArgs(options: OptionValues): Args {
     let repoDir = process.env.GITHUB_WORKSPACE;
     logger.debug(`GITHUB_WORKSPACE: ${repoDir}`)
     if (repoDir) {
@@ -45,6 +71,8 @@ function getArgs(): Args {
         ref: process.env.GITHUB_REF || "",
     }
 
+    logger.info(`args: ${JSON.stringify(args)}`);
+
     args.dogefile = path.resolve(repoDir, args.dogefile);
     if (!existsSync(args.dogefile)) {
         throw new Error(`Dogefile not found: ${args.dogefile}`);
@@ -53,14 +81,6 @@ function getArgs(): Args {
     return args;
 }
 
-/**
- * Deployment status, returned by the API
- */
-export type Deployment = {
-    id: number,
-    status: string,
-    progress_url: string,
-}
 
 /**
  * Load the dogefile
@@ -116,7 +136,7 @@ async function main(args: Args) {
     }
 }
 
-main(getArgs()).catch(e => {
+main(getArgs(options)).catch(e => {
     failure(undefined, e);
     // logger.error(e);
     core.setFailed("Failed to trigger deployment");
