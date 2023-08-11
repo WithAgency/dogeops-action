@@ -26,22 +26,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLogger = void 0;
+exports.getLogger = exports.setVerbose = void 0;
 const core = __importStar(require("@actions/core"));
 const chalk_1 = __importDefault(require("chalk"));
 const utils_1 = require("./utils");
-const index_1 = require("./index");
+let _VERBOSE = false;
+function setVerbose(v) {
+    _VERBOSE = v;
+}
+exports.setVerbose = setVerbose;
 /**
  * Get a logger for the given name. If running in a GitHub Action, the logger
  * will use the GitHub Actions logging API.
  * @param name - logger name
  */
 function getLogger(name) {
-    const verboseLogging = (0, index_1.isVerbose)();
     if ((0, utils_1.isGitHubAction)()) {
-        return new GitHubActionLog(name, verboseLogging);
+        return new GitHubActionLog(name);
     }
-    return new Log(name, verboseLogging);
+    return new Log(name);
 }
 exports.getLogger = getLogger;
 /**
@@ -65,8 +68,7 @@ const logPrefixes = {
     error: "[ERR]",
 };
 class Log {
-    constructor(name, verbose) {
-        this.verbose = verbose;
+    constructor(name) {
         this.name = name;
     }
     formatMessage(level, message) {
@@ -85,7 +87,7 @@ class Log {
         console[level](msg);
     }
     debug(message) {
-        if (this.verbose) {
+        if (_VERBOSE) {
             this.logMessage("debug", message);
         }
     }
@@ -103,9 +105,8 @@ class Log {
     }
 }
 class GitHubActionLog {
-    constructor(name, verbose) {
+    constructor(name) {
         this.name = name;
-        this.verbose = verbose;
     }
     formatMessage(level, message) {
         return `${logPrefixes[level]} ${message}`;
@@ -122,7 +123,7 @@ class GitHubActionLog {
         core[level](msg);
     }
     debug(message) {
-        if (this.verbose) {
+        if (_VERBOSE) {
             this.logMessage("debug", message);
         }
     }

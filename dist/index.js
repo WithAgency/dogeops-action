@@ -286,10 +286,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = exports.isVerbose = void 0;
+exports.run = void 0;
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __nccwpck_require__(7147);
+const logging_1 = __nccwpck_require__(9174);
+const logger = (0, logging_1.getLogger)("index");
 const yaml = __nccwpck_require__(1917);
 const { Command } = __nccwpck_require__(4379);
 const context_1 = __nccwpck_require__(7331);
@@ -315,15 +317,9 @@ program
     .option("--ref <ref>", "Git ref of the commit being deployed")
     .parse(process.argv);
 const options = program.opts();
-/**
- * Returns true if verbose logging is enabled
- */
-function isVerbose() {
-    return options.verbose;
+if (options.verbose) {
+    (0, logging_1.setVerbose)(true);
 }
-exports.isVerbose = isVerbose;
-const logging_1 = __nccwpck_require__(9174);
-const logger = (0, logging_1.getLogger)("index");
 /**
  * Get the action arguments from the environment and defined inputs.
  */
@@ -451,22 +447,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getLogger = void 0;
+exports.getLogger = exports.setVerbose = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const chalk_1 = __importDefault(__nccwpck_require__(7037));
 const utils_1 = __nccwpck_require__(4729);
-const index_1 = __nccwpck_require__(9283);
+let _VERBOSE = false;
+function setVerbose(v) {
+    _VERBOSE = v;
+}
+exports.setVerbose = setVerbose;
 /**
  * Get a logger for the given name. If running in a GitHub Action, the logger
  * will use the GitHub Actions logging API.
  * @param name - logger name
  */
 function getLogger(name) {
-    const verboseLogging = (0, index_1.isVerbose)();
     if ((0, utils_1.isGitHubAction)()) {
-        return new GitHubActionLog(name, verboseLogging);
+        return new GitHubActionLog(name);
     }
-    return new Log(name, verboseLogging);
+    return new Log(name);
 }
 exports.getLogger = getLogger;
 /**
@@ -490,8 +489,7 @@ const logPrefixes = {
     error: "[ERR]",
 };
 class Log {
-    constructor(name, verbose) {
-        this.verbose = verbose;
+    constructor(name) {
         this.name = name;
     }
     formatMessage(level, message) {
@@ -510,7 +508,7 @@ class Log {
         console[level](msg);
     }
     debug(message) {
-        if (this.verbose) {
+        if (_VERBOSE) {
             this.logMessage("debug", message);
         }
     }
@@ -528,9 +526,8 @@ class Log {
     }
 }
 class GitHubActionLog {
-    constructor(name, verbose) {
+    constructor(name) {
         this.name = name;
-        this.verbose = verbose;
     }
     formatMessage(level, message) {
         return `${logPrefixes[level]} ${message}`;
@@ -547,7 +544,7 @@ class GitHubActionLog {
         core[level](msg);
     }
     debug(message) {
-        if (this.verbose) {
+        if (_VERBOSE) {
             this.logMessage("debug", message);
         }
     }
