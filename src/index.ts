@@ -9,7 +9,7 @@ const yaml = require('js-yaml');
 const {Command} = require("commander");
 
 import {Context, getContext} from "./context";
-import {Deployment, post} from "./api";
+import {Deployment, post, setBaseUrl} from "./api";
 import {failure, success, warning} from "./outcome";
 import {OptionValues} from "commander";
 
@@ -50,9 +50,8 @@ program
 
 
 const options = program.opts();
-if (options.verbose) {
-    setVerbose(true);
-}
+setVerbose(options.verbose);
+setBaseUrl(options.apiUrl);
 
 
 /**

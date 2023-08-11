@@ -35,16 +35,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.post = void 0;
+exports.post = exports.setBaseUrl = void 0;
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const core = __importStar(require("@actions/core"));
 const logging_1 = require("./logging");
 const logger = (0, logging_1.getLogger)("api");
+let _BASE_URL = undefined;
+function setBaseUrl(url) {
+    _BASE_URL = url;
+}
+exports.setBaseUrl = setBaseUrl;
 /**
  * Get the base URL for the API
  */
 function getBaseUrl() {
-    let baseUrl = core.getInput('api_url');
+    let baseUrl = _BASE_URL;
     if (!baseUrl) {
         throw new Error("api_url not set");
     }

@@ -4,6 +4,12 @@ import {getLogger} from "./logging";
 
 const logger = getLogger("api");
 
+let _BASE_URL: string | undefined = undefined;
+
+export function setBaseUrl(url: string) {
+    _BASE_URL = url;
+}
+
 /**
  * Deployment status
  */
@@ -17,7 +23,7 @@ export type Deployment = {
  * Get the base URL for the API
  */
 function getBaseUrl() {
-    let baseUrl = core.getInput('api_url');
+    let baseUrl = _BASE_URL;
     if (!baseUrl) {
         throw new Error("api_url not set");
     }

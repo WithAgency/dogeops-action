@@ -42,16 +42,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.post = void 0;
+exports.post = exports.setBaseUrl = void 0;
 const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
 const core = __importStar(__nccwpck_require__(2186));
 const logging_1 = __nccwpck_require__(9174);
 const logger = (0, logging_1.getLogger)("api");
+let _BASE_URL = undefined;
+function setBaseUrl(url) {
+    _BASE_URL = url;
+}
+exports.setBaseUrl = setBaseUrl;
 /**
  * Get the base URL for the API
  */
 function getBaseUrl() {
-    let baseUrl = core.getInput('api_url');
+    let baseUrl = _BASE_URL;
     if (!baseUrl) {
         throw new Error("api_url not set");
     }
@@ -317,9 +322,8 @@ program
     .option("--ref <ref>", "Git ref of the commit being deployed")
     .parse(process.argv);
 const options = program.opts();
-if (options.verbose) {
-    (0, logging_1.setVerbose)(true);
-}
+(0, logging_1.setVerbose)(options.verbose);
+(0, api_1.setBaseUrl)(options.apiUrl);
 /**
  * Get the action arguments from the environment and CLI options.
  */
