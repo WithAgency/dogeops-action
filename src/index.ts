@@ -42,7 +42,7 @@ program
     .description("A CLI to start a DogeOps deployment")
     .option("--api-url <url>", "URL of the DogeOps API")
     .option("--api-key <key>", "API key to use")
-    .option("--dogefile <path>", "Path to the Dogefile to use")
+    .option("--dogefile [filename]", "Path to the Dogefile to use", "Dogefile")
     .option("-v, --verbose", "Verbose output")
     .option("--repo <path>", "Path to the git repository")
     .option("--event <name>", "Name of the GitHub event")
@@ -50,7 +50,14 @@ program
     .parse(process.argv);
 
 
-export const options = program.opts();
+const options = program.opts();
+
+/**
+ * Returns true if verbose logging is enabled
+ */
+export const isVerbose = () => {
+    return options.verbose;
+}
 
 
 /**

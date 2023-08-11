@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import chalk from "chalk";
 import {isGitHubAction} from "./utils";
-import {options} from "./index";
+import {isVerbose} from "./index";
 
 export type LogLevel = "debug" | "info" | "warning" | "warn" | "error";
 
@@ -14,21 +14,12 @@ export interface LogInterface {
 }
 
 /**
- * Returns true if verbose logging is enabled
- */
-function verbose() {
-    const isVerbose =  options.verbose === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
-    console.log(`Verbose logging: ${isVerbose}`);
-    return isVerbose;
-}
-
-/**
  * Get a logger for the given name. If running in a GitHub Action, the logger
  * will use the GitHub Actions logging API.
  * @param name - logger name
  */
 export function getLogger(name: string): LogInterface {
-    const verboseLogging = verbose();
+    const verboseLogging = isVerbose();
     if (isGitHubAction()) {
         return new GitHubActionLog(name, verboseLogging);
     }

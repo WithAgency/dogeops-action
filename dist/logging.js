@@ -32,20 +32,12 @@ const chalk_1 = __importDefault(require("chalk"));
 const utils_1 = require("./utils");
 const index_1 = require("./index");
 /**
- * Returns true if verbose logging is enabled
- */
-function verbose() {
-    const isVerbose = index_1.options.verbose === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
-    console.log(`Verbose logging: ${isVerbose}`);
-    return isVerbose;
-}
-/**
  * Get a logger for the given name. If running in a GitHub Action, the logger
  * will use the GitHub Actions logging API.
  * @param name - logger name
  */
 function getLogger(name) {
-    const verboseLogging = verbose();
+    const verboseLogging = (0, index_1.isVerbose)();
     if ((0, utils_1.isGitHubAction)()) {
         return new GitHubActionLog(name, verboseLogging);
     }

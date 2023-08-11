@@ -286,7 +286,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = exports.options = void 0;
+exports.run = exports.isVerbose = void 0;
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __nccwpck_require__(7147);
@@ -310,13 +310,20 @@ program
     .description("A CLI to start a DogeOps deployment")
     .option("--api-url <url>", "URL of the DogeOps API")
     .option("--api-key <key>", "API key to use")
-    .option("--dogefile <path>", "Path to the Dogefile to use")
+    .option("--dogefile [filename]", "Path to the Dogefile to use", "Dogefile")
     .option("-v, --verbose", "Verbose output")
     .option("--repo <path>", "Path to the git repository")
     .option("--event <name>", "Name of the GitHub event")
     .option("--ref <ref>", "Git ref of the commit being deployed")
     .parse(process.argv);
-exports.options = program.opts();
+const options = program.opts();
+/**
+ * Returns true if verbose logging is enabled
+ */
+const isVerbose = () => {
+    return options.verbose;
+};
+exports.isVerbose = isVerbose;
 /**
  * Get the action arguments from the environment and defined inputs.
  */
@@ -403,7 +410,7 @@ function main(args) {
         }
     });
 }
-main(getArgs(exports.options)).catch(e => {
+main(getArgs(options)).catch(e => {
     (0, outcome_1.failure)(undefined, e);
     // logger.error(e);
     core.setFailed("Failed to trigger deployment");
@@ -450,20 +457,12 @@ const chalk_1 = __importDefault(__nccwpck_require__(7037));
 const utils_1 = __nccwpck_require__(4729);
 const index_1 = __nccwpck_require__(9283);
 /**
- * Returns true if verbose logging is enabled
- */
-function verbose() {
-    const isVerbose = index_1.options.verbose === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
-    console.log(`Verbose logging: ${isVerbose}`);
-    return isVerbose;
-}
-/**
  * Get a logger for the given name. If running in a GitHub Action, the logger
  * will use the GitHub Actions logging API.
  * @param name - logger name
  */
 function getLogger(name) {
-    const verboseLogging = verbose();
+    const verboseLogging = (0, index_1.isVerbose)();
     if ((0, utils_1.isGitHubAction)()) {
         return new GitHubActionLog(name, verboseLogging);
     }
