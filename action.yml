@@ -48,8 +48,8 @@ runs:
         env | grep INPUT
     - shell: bash
       run: |
-        node ${GITHUB_ACTION_PATH}/dist/index.js
-          --dogefile "${{ inputs.dogefile }}"
-          --api-url "${{ inputs.api_url }}"
-          --api-key "${{ inputs.api_key }}"
+        node ${GITHUB_ACTION_PATH}/dist/index.js \
+          --dogefile "${{ inputs.dogefile }}" \
+          --api-url "${{ inputs.api_url }}" \
+          --api-key "${{ inputs.api_key }}" \
           ${{ inputs.verbose == 'true' && '--verbose' || '' }}
