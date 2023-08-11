@@ -3,16 +3,12 @@ import * as core from '@actions/core'
 import {existsSync, readFileSync} from "fs";
 
 const yaml = require('js-yaml');
-const { Command } = require("commander");
+const {Command} = require("commander");
 
 import {Context, getContext} from "./context";
-import {getLogger} from "./logging";
 import {Deployment, post} from "./api";
 import {failure, success, warning} from "./outcome";
 import {OptionValues} from "commander";
-
-
-const logger = getLogger("index");
 
 /**
  * Action arguments
@@ -33,8 +29,8 @@ const program = new Command();
  * Retrieve the version of the package from the package.json file
  */
 function getPackageVersion() {
-  const packageJson = require("../package.json");
-  return packageJson.version;
+    const packageJson = require("../package.json");
+    return packageJson.version;
 }
 
 program
@@ -58,6 +54,10 @@ const options = program.opts();
 export const isVerbose = () => {
     return options.verbose;
 }
+
+import {getLogger} from "./logging";
+
+const logger = getLogger("index");
 
 
 /**

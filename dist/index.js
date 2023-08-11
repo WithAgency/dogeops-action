@@ -293,10 +293,8 @@ const fs_1 = __nccwpck_require__(7147);
 const yaml = __nccwpck_require__(1917);
 const { Command } = __nccwpck_require__(4379);
 const context_1 = __nccwpck_require__(7331);
-const logging_1 = __nccwpck_require__(9174);
 const api_1 = __nccwpck_require__(2491);
 const outcome_1 = __nccwpck_require__(2704);
-const logger = (0, logging_1.getLogger)("index");
 const program = new Command();
 /**
  * Retrieve the version of the package from the package.json file
@@ -324,6 +322,8 @@ const isVerbose = () => {
     return options.verbose;
 };
 exports.isVerbose = isVerbose;
+const logging_1 = __nccwpck_require__(9174);
+const logger = (0, logging_1.getLogger)("index");
 /**
  * Get the action arguments from the environment and defined inputs.
  */
