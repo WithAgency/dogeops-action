@@ -318,9 +318,9 @@ const options = program.opts();
 /**
  * Returns true if verbose logging is enabled
  */
-const isVerbose = () => {
+function isVerbose() {
     return options.verbose;
-};
+}
 exports.isVerbose = isVerbose;
 const logging_1 = __nccwpck_require__(9174);
 const logger = (0, logging_1.getLogger)("index");

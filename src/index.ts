@@ -51,7 +51,7 @@ const options = program.opts();
 /**
  * Returns true if verbose logging is enabled
  */
-export const isVerbose = () => {
+export function isVerbose() {
     return options.verbose;
 }
 
