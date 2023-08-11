@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import chalk from "chalk";
 import {isGitHubAction} from "./utils";
+import {options} from "./index";
 
 export type LogLevel = "debug" | "info" | "warning" | "warn" | "error";
 
@@ -16,7 +17,7 @@ export interface LogInterface {
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    const isVerbose =  core.getInput('VERBOSE').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    const isVerbose =  options.verbose === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
     console.log(`Verbose logging: ${isVerbose}`);
     return isVerbose;
 }

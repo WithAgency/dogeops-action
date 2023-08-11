@@ -44,35 +44,40 @@ program
     .option("--api-key <key>", "API key to use")
     .option("--dogefile <path>", "Path to the Dogefile to use")
     .option("-v, --verbose", "Verbose output")
+    .option("--repo <path>", "Path to the git repository")
+    .option("--event <name>", "Name of the GitHub event")
+    .option("--ref <ref>", "Git ref of the commit being deployed")
     .parse(process.argv);
 
 
-const options = program.opts();
+export const options = program.opts();
 
 
 /**
  * Get the action arguments from the environment and defined inputs.
  */
 function getArgs(options: OptionValues): Args {
-    let repoDir = process.env.GITHUB_WORKSPACE;
-    logger.debug(`GITHUB_WORKSPACE: ${repoDir}`)
+    logger.info(`options: ${JSON.stringify(options)}`);
+
+    let repoDir = options.repo;
+    logger.debug(`repo dir: ${repoDir}`)
     if (repoDir) {
         repoDir = path.resolve(repoDir);
     } else {
-        throw new Error("GITHUB_WORKSPACE not set");
+        // throw new Error("GITHUB_WORKSPACE not set");
+        throw new Error("repository path not set");
     }
 
     const args: Args = {
-        api_url: core.getInput('api_url'),
-        api_key: core.getInput('api_key'),
-        dogefile: core.getInput('dogefile') || "Dogefile",
-        event: process.env.GITHUB_EVENT_NAME || "",
+        api_url: options.api_url || core.getInput('api_url'),
+        api_key: options.api_key || core.getInput('api_key'),
+        dogefile: options.dogefile || core.getInput('dogefile'),
+        event: options.event || "",
         repo: repoDir,
-        ref: process.env.GITHUB_REF || "",
+        ref: options.ref || "",
     }
 
     logger.info(`args: ${JSON.stringify(args)}`);
-    logger.info(`options: ${JSON.stringify(options)}`);
 
     args.dogefile = path.resolve(repoDir, args.dogefile);
     if (!existsSync(args.dogefile)) {

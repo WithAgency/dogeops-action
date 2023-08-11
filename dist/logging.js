@@ -30,11 +30,12 @@ exports.getLogger = void 0;
 const core = __importStar(require("@actions/core"));
 const chalk_1 = __importDefault(require("chalk"));
 const utils_1 = require("./utils");
+const index_1 = require("./index");
 /**
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    const isVerbose = core.getInput('VERBOSE').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    const isVerbose = index_1.options.verbose === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
     console.log(`Verbose logging: ${isVerbose}`);
     return isVerbose;
 }

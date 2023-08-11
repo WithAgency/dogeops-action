@@ -29,7 +29,10 @@ runs:
     - shell: bash
       run: |
         node ${GITHUB_ACTION_PATH}/dist/index.js \
-          --dogefile "${{ inputs.dogefile }}" \
+          ${{ inputs.verbose == 'true' && '--verbose' || '' }} \
+          --event "${{ github.event_name }}" \
+          --repo ${GITHUB_WORKSPACE} \
+          --ref "${{ github.ref }}" \
           --api-url "${{ inputs.api_url }}" \
           --api-key "${{ inputs.api_key }}" \
-          ${{ inputs.verbose == 'true' && '--verbose' || '' }}
+          --dogefile "${{ inputs.dogefile }}"

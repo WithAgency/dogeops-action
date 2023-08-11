@@ -286,7 +286,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = exports.options = void 0;
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const core = __importStar(__nccwpck_require__(2186));
 const fs_1 = __nccwpck_require__(7147);
@@ -312,30 +312,34 @@ program
     .option("--api-key <key>", "API key to use")
     .option("--dogefile <path>", "Path to the Dogefile to use")
     .option("-v, --verbose", "Verbose output")
+    .option("--repo <path>", "Path to the git repository")
+    .option("--event <name>", "Name of the GitHub event")
+    .option("--ref <ref>", "Git ref of the commit being deployed")
     .parse(process.argv);
-const options = program.opts();
+exports.options = program.opts();
 /**
  * Get the action arguments from the environment and defined inputs.
  */
 function getArgs(options) {
-    let repoDir = process.env.GITHUB_WORKSPACE;
-    logger.debug(`GITHUB_WORKSPACE: ${repoDir}`);
+    logger.info(`options: ${JSON.stringify(options)}`);
+    let repoDir = options.repo;
+    logger.debug(`repo dir: ${repoDir}`);
     if (repoDir) {
         repoDir = path_1.default.resolve(repoDir);
     }
     else {
-        throw new Error("GITHUB_WORKSPACE not set");
+        // throw new Error("GITHUB_WORKSPACE not set");
+        throw new Error("repository path not set");
     }
     const args = {
-        api_url: core.getInput('api_url'),
-        api_key: core.getInput('api_key'),
-        dogefile: core.getInput('dogefile') || "Dogefile",
-        event: process.env.GITHUB_EVENT_NAME || "",
+        api_url: options.api_url || core.getInput('api_url'),
+        api_key: options.api_key || core.getInput('api_key'),
+        dogefile: options.dogefile || core.getInput('dogefile'),
+        event: options.event || "",
         repo: repoDir,
-        ref: process.env.GITHUB_REF || "",
+        ref: options.ref || "",
     };
     logger.info(`args: ${JSON.stringify(args)}`);
-    logger.info(`options: ${JSON.stringify(options)}`);
     args.dogefile = path_1.default.resolve(repoDir, args.dogefile);
     if (!(0, fs_1.existsSync)(args.dogefile)) {
         throw new Error(`Dogefile not found: ${args.dogefile}`);
@@ -399,7 +403,7 @@ function main(args) {
         }
     });
 }
-main(getArgs(options)).catch(e => {
+main(getArgs(exports.options)).catch(e => {
     (0, outcome_1.failure)(undefined, e);
     // logger.error(e);
     core.setFailed("Failed to trigger deployment");
@@ -444,11 +448,12 @@ exports.getLogger = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const chalk_1 = __importDefault(__nccwpck_require__(7037));
 const utils_1 = __nccwpck_require__(4729);
+const index_1 = __nccwpck_require__(9283);
 /**
  * Returns true if verbose logging is enabled
  */
 function verbose() {
-    const isVerbose = core.getInput('VERBOSE').toLowerCase() === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
+    const isVerbose = index_1.options.verbose === "true" || process.env.ACTIONS_STEP_DEBUG === "true";
     console.log(`Verbose logging: ${isVerbose}`);
     return isVerbose;
 }
