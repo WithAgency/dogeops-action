@@ -1,6 +1,9 @@
 import path from "path";
 import * as core from '@actions/core'
 import {existsSync, readFileSync} from "fs";
+import {getLogger, setVerbose} from "./logging";
+
+const logger = getLogger("index");
 
 const yaml = require('js-yaml');
 const {Command} = require("commander");
@@ -47,17 +50,9 @@ program
 
 
 const options = program.opts();
-
-/**
- * Returns true if verbose logging is enabled
- */
-export function isVerbose() {
-    return options.verbose;
+if (options.verbose) {
+    setVerbose(true);
 }
-
-import {getLogger} from "./logging";
-
-const logger = getLogger("index");
 
 
 /**

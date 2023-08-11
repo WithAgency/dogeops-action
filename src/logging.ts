@@ -1,10 +1,14 @@
 import * as core from '@actions/core';
 import chalk from "chalk";
 import {isGitHubAction} from "./utils";
-import {isVerbose} from "./index";
 
 export type LogLevel = "debug" | "info" | "warning" | "warn" | "error";
 
+let _VERBOSE = false;
+
+export function setVerbose(v: boolean) {
+    _VERBOSE = v;
+}
 
 export interface LogInterface {
     debug: (message: string) => void;
@@ -19,11 +23,10 @@ export interface LogInterface {
  * @param name - logger name
  */
 export function getLogger(name: string): LogInterface {
-    const verboseLogging = isVerbose();
     if (isGitHubAction()) {
-        return new GitHubActionLog(name, verboseLogging);
+        return new GitHubActionLog(name);
     }
-    return new Log(name, verboseLogging);
+    return new Log(name);
 }
 
 /**
@@ -49,14 +52,11 @@ const logPrefixes = {
 }
 
 class Log implements LogInterface {
-    private readonly verbose: boolean;
     private readonly name: string;
 
     constructor(
         name: string,
-        verbose: boolean,
     ) {
-        this.verbose = verbose;
         this.name = name;
     }
 
@@ -86,7 +86,7 @@ class Log implements LogInterface {
     }
 
     public debug(message: string) {
-        if (this.verbose) {
+        if (_VERBOSE) {
             this.logMessage("debug", message);
         }
     }
@@ -112,14 +112,11 @@ class Log implements LogInterface {
 
 class GitHubActionLog implements LogInterface {
     private readonly name: string;
-    private readonly verbose: boolean;
 
     constructor(
         name: string,
-        verbose: boolean,
     ) {
         this.name = name;
-        this.verbose = verbose;
     }
 
     private formatMessage(
@@ -145,7 +142,7 @@ class GitHubActionLog implements LogInterface {
     }
 
     public debug(message: string) {
-        if (this.verbose) {
+        if (_VERBOSE) {
             this.logMessage("debug", message);
         }
     }
