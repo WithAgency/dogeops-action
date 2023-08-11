@@ -72,6 +72,7 @@ function getArgs(options: OptionValues): Args {
     }
 
     logger.info(`args: ${JSON.stringify(args)}`);
+    logger.info(`options: ${JSON.stringify(options)}`);
 
     args.dogefile = path.resolve(repoDir, args.dogefile);
     if (!existsSync(args.dogefile)) {

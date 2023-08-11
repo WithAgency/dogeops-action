@@ -335,6 +335,7 @@ function getArgs(options) {
         ref: process.env.GITHUB_REF || "",
     };
     logger.info(`args: ${JSON.stringify(args)}`);
+    logger.info(`options: ${JSON.stringify(options)}`);
     args.dogefile = path_1.default.resolve(repoDir, args.dogefile);
     if (!(0, fs_1.existsSync)(args.dogefile)) {
         throw new Error(`Dogefile not found: ${args.dogefile}`);
