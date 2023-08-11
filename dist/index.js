@@ -321,7 +321,7 @@ if (options.verbose) {
     (0, logging_1.setVerbose)(true);
 }
 /**
- * Get the action arguments from the environment and defined inputs.
+ * Get the action arguments from the environment and CLI options.
  */
 function getArgs(options) {
     logger.info(`options: ${JSON.stringify(options)}`);
@@ -331,13 +331,12 @@ function getArgs(options) {
         repoDir = path_1.default.resolve(repoDir);
     }
     else {
-        // throw new Error("GITHUB_WORKSPACE not set");
         throw new Error("repository path not set");
     }
     const args = {
-        api_url: options.api_url || core.getInput('api_url'),
-        api_key: options.api_key || core.getInput('api_key'),
-        dogefile: options.dogefile || core.getInput('dogefile'),
+        api_url: options.apiUrl,
+        api_key: options.apiKey,
+        dogefile: options.dogefile,
         event: options.event || "",
         repo: repoDir,
         ref: options.ref || "",
