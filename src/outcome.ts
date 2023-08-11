@@ -62,7 +62,7 @@ const logger = getLogger("outcome");
  * @param deployment Deployment object
  */
 export function success(deployment: Deployment) {
-    logger.info(`Deployment ${deployment.id} succeeded`);
+    logger.info(`Deployment ${deployment.id} started`);
     logger.info(SUCCESS_DOGE);
     logger.info("");
     logger.info("Wow! Such success!");
@@ -74,7 +74,7 @@ export function success(deployment: Deployment) {
  * @param deployment Deployment object
  */
 export function warning(deployment: Deployment) {
-    logger.warn(`Deployment ${deployment.id} succeeded with warnings`);
+    logger.warn(`Deployment ${deployment.id} was already started`);
     logger.warn(CONCERNED_DOGE);
     logger.warn("");
     logger.warn(`There is a deployment for this Dogefile already running in this environment, with status ${deployment.status}`);
