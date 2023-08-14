@@ -4,7 +4,7 @@ description: "Request the deployment of this repository via DogeOps"
 
 inputs:
   dogefile:
-    description: "Name of the Dogefile"
+    description: "Path to the Dogefile"
     default: "Dogefile"
   api_url:
     description: "URL of the DogeOps API"
@@ -13,11 +13,25 @@ inputs:
     description: "API key to authenticate with DogeOps"
     required: true
 
+  # other args to pass to the script
+  verbose:
+    description: "Verbose output"
+    default: true
+
 runs:
   using: "composite"
   steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: "18"
+
     - shell: bash
       run: |
-        DOGEOPS_API_URL=${{ inputs.api_url }} \
-        DOGEOPS_API_KEY=${{ inputs.api_key }} \
-        "${GITHUB_ACTION_PATH}"/doge.sh -v -d ${{ inputs.dogefile }}
+        node ${GITHUB_ACTION_PATH}/dist/index.js \
+          ${{ inputs.verbose == 'true' && '--verbose' || '' }} \
+          --event "${{ github.event_name }}" \
+          --repo ${GITHUB_WORKSPACE} \
+          --ref "${{ github.ref }}" \
+          --api-url "${{ inputs.api_url }}" \
+          --api-key "${{ inputs.api_key }}" \
+          --dogefile "${{ inputs.dogefile }}"

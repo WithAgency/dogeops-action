@@ -16,6 +16,10 @@ on:
         description: 'DogeOps API Key'
         required: true
         type: string
+      verbose:
+        description: 'Verbose output'
+        default: true
+        type: boolean
 
 jobs:
   deploy:
@@ -25,9 +29,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Deploy to DogeOps
+      - name: Deploy via DogeOps
         uses: WithAgency/dogeops-action@v1
         with:
           dogefile: ${{ inputs.dogefile }}
           api_url: ${{ inputs.api_url }}
           api_key: ${{ inputs.api_key }}
+          verbose: ${{ inputs.verbose }}
