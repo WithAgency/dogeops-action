@@ -47,16 +47,27 @@ export class GitRepo {
         logger.debug(`repo info: ${JSON.stringify(this.info)}`);
     }
 
+    /**
+     * Split the author string into name and email
+     * @param author
+     * @private
+     */
     private splitAuthor(author: string): [string, string] {
         const [name, email] = author.split(" <");
         return [name, email.slice(0, -1)];
     }
 
+    /**
+     * Get the remote URL of the repository
+     */
     public getRemoteUrl(): string {
         const remote = shell(this.repoDir, "git config --get remote.origin.url");
         return remote.trim();
     }
 
+    /**
+     * Get the author of the last commit
+     */
     public getAuthor(): Author {
         logger.debug(`author: ${JSON.stringify(this.info.committer)}`)
 
@@ -76,6 +87,9 @@ export class GitRepo {
         return author;
     }
 
+    /**
+     * Get the last commit
+     */
     public getCommit(): Commit {
         // return the full refs/heads/branch_name
         const ref = shell(this.repoDir, "git symbolic-ref HEAD");

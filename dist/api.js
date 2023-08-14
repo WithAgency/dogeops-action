@@ -22,11 +22,10 @@ class DogeApi {
         this.apiKey = apiKey;
     }
     /**
-    * Get the authentication headers
-    * @param otherHeaders - additional headers to include
+    * Set the API headers.
     */
-    authHeaders(otherHeaders = {}) {
-        return Object.assign(Object.assign({}, otherHeaders), { 'X-Api-Key': this.apiKey });
+    apiHeaders(otherHeaders = {}) {
+        return Object.assign({ 'Content-Type': 'application/json', 'X-Api-Key': this.apiKey }, otherHeaders);
     }
     /**
      * Create a deployment with the given context and Dogefile
@@ -45,7 +44,7 @@ class DogeApi {
             const res = yield (0, node_fetch_1.default)(url, {
                 method: 'POST',
                 body,
-                headers: this.authHeaders({ 'Content-Type': 'application/json' }),
+                headers: this.apiHeaders(),
             });
             const json = yield res.json();
             logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);

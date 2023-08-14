@@ -24,13 +24,13 @@ export class DogeApi {
     }
 
     /**
-    * Get the authentication headers
-    * @param otherHeaders - additional headers to include
+    * Set the API headers.
     */
-    private authHeaders(otherHeaders: Record<string, string> = {}) {
+    private apiHeaders(otherHeaders: Record<string, string> = {}) {
         return {
-            ...otherHeaders,
+            'Content-Type': 'application/json',
             'X-Api-Key': this.apiKey,
+            ...otherHeaders,
         };
     }
 
@@ -53,7 +53,7 @@ export class DogeApi {
         const res = await fetch(url, {
             method: 'POST',
             body,
-            headers: this.authHeaders({'Content-Type': 'application/json'}),
+            headers: this.apiHeaders(),
         });
         const json = await res.json();
         logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);

@@ -29,11 +29,10 @@ class DogeApi {
         this.apiKey = apiKey;
     }
     /**
-    * Get the authentication headers
-    * @param otherHeaders - additional headers to include
+    * Set the API headers.
     */
-    authHeaders(otherHeaders = {}) {
-        return Object.assign(Object.assign({}, otherHeaders), { 'X-Api-Key': this.apiKey });
+    apiHeaders(otherHeaders = {}) {
+        return Object.assign({ 'Content-Type': 'application/json', 'X-Api-Key': this.apiKey }, otherHeaders);
     }
     /**
      * Create a deployment with the given context and Dogefile
@@ -52,7 +51,7 @@ class DogeApi {
             const res = yield (0, node_fetch_1.default)(url, {
                 method: 'POST',
                 body,
-                headers: this.authHeaders({ 'Content-Type': 'application/json' }),
+                headers: this.apiHeaders(),
             });
             const json = yield res.json();
             logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
@@ -169,14 +168,25 @@ class GitRepo {
         this.info = getRepoInfo(repoDir);
         logger.debug(`repo info: ${JSON.stringify(this.info)}`);
     }
+    /**
+     * Split the author string into name and email
+     * @param author
+     * @private
+     */
     splitAuthor(author) {
         const [name, email] = author.split(" <");
         return [name, email.slice(0, -1)];
     }
+    /**
+     * Get the remote URL of the repository
+     */
     getRemoteUrl() {
         const remote = shell(this.repoDir, "git config --get remote.origin.url");
         return remote.trim();
     }
+    /**
+     * Get the author of the last commit
+     */
     getAuthor() {
         var _a;
         logger.debug(`author: ${JSON.stringify(this.info.committer)}`);
@@ -195,6 +205,9 @@ class GitRepo {
         logger.debug(`computed author: ${JSON.stringify(author)}`);
         return author;
     }
+    /**
+     * Get the last commit
+     */
     getCommit() {
         // return the full refs/heads/branch_name
         const ref = shell(this.repoDir, "git symbolic-ref HEAD");

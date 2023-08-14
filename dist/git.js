@@ -23,14 +23,25 @@ class GitRepo {
         this.info = getRepoInfo(repoDir);
         logger.debug(`repo info: ${JSON.stringify(this.info)}`);
     }
+    /**
+     * Split the author string into name and email
+     * @param author
+     * @private
+     */
     splitAuthor(author) {
         const [name, email] = author.split(" <");
         return [name, email.slice(0, -1)];
     }
+    /**
+     * Get the remote URL of the repository
+     */
     getRemoteUrl() {
         const remote = shell(this.repoDir, "git config --get remote.origin.url");
         return remote.trim();
     }
+    /**
+     * Get the author of the last commit
+     */
     getAuthor() {
         var _a;
         logger.debug(`author: ${JSON.stringify(this.info.committer)}`);
@@ -49,13 +60,17 @@ class GitRepo {
         logger.debug(`computed author: ${JSON.stringify(author)}`);
         return author;
     }
+    /**
+     * Get the last commit
+     */
     getCommit() {
-        // return the full refs/heads/branch name
+        // return the full refs/heads/branch_name
         const ref = shell(this.repoDir, "git symbolic-ref HEAD");
+        const message = shell(this.repoDir, "git --no-pager log -1 --pretty=format:'%B'");
         return {
             ref,
             sha: this.info.sha,
-            message: this.info.commitMessage,
+            message,
         };
     }
 }

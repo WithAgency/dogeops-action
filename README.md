@@ -75,14 +75,26 @@ GITHUB_ACTIONS=true
 ACTIONS_STEP_DEBUG=true
 GITHUB_EVENT_NAME=push
 GITHUB_WORKSPACE="a repo local path"
-GITHUB_REF_NAME=develop
 GITHUB_REF=refs/heads/develop
 
-INPUT_VERBOSE="true"
+GITHUB_WORKSPACE="a repo local path"  # the one you want to deploy
+
 INPUT_API_URL="DogeOps API URL"
-INPUT_API_KEY="Your API key"
+INPUT_API_KEY="Your API key for the repo"
 INPUT_DOGEFILE="Dogefile"
 ```
+and `source` it.
 
 Then run `npm run package` to build the action.
-You can then run `node dist/index.js` to test it.
+You can then run the following command to test it, which is a variation of what GitHub does:
+    
+```bash
+node dist/index.js \
+      --verbose \
+      --event "${GITHUB_EVENT_NAME}" \
+      --repo ${GITHUB_WORKSPACE} \
+      --ref "${GITHUB_REF}" \
+      --api-url "${INPUT_API_URL}" \
+      --api-key "${INPUT_API_KEY}" \
+      --dogefile "${INPUT_DOGEFILE}"
+```
