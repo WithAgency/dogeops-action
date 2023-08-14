@@ -77,13 +77,14 @@ export class GitRepo {
     }
 
     public getCommit(): Commit {
-        // return the full refs/heads/branch name
+        // return the full refs/heads/branch_name
         const ref = shell(this.repoDir, "git symbolic-ref HEAD");
+        const message = shell(this.repoDir, "git --no-pager log -1 --pretty=format:'%B'");
 
         return {
             ref,
             sha: this.info.sha,
-            message: this.info.commitMessage,
+            message,
         }
     }
 }
