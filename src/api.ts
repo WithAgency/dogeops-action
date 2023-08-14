@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import * as core from '@actions/core';
 import {getLogger} from "./logging";
+import {Context} from "./context";
 
 const logger = getLogger("api");
 
@@ -19,59 +20,50 @@ export type Deployment = {
     progress_url: string,
 }
 
-/**
- * Get the base URL for the API
- */
-function getBaseUrl() {
-    let baseUrl = _BASE_URL;
-    if (!baseUrl) {
-        throw new Error("api_url not set");
+
+export class DogeApi {
+    private readonly baseUrl: string;
+    private readonly apiKey: string;
+
+    constructor(baseUrl: string, apiKey: string) {
+        this.baseUrl = baseUrl;
+        this.apiKey = apiKey;
     }
-    if (baseUrl.endsWith("/")) {
-        baseUrl = baseUrl.slice(0, -1);
+
+    /**
+    * Get the authentication headers
+    * @param otherHeaders - additional headers to include
+    */
+    private authHeaders(otherHeaders: Record<string, string> = {}) {
+        return {
+            ...otherHeaders,
+            'X-Api-Key': this.apiKey,
+        };
     }
-    return baseUrl;
-}
 
-/**
- * Get the full URL for the given path
- * @param path - path to the API endpoint
- */
-function getApiUrl(path: string) {
-    return `${getBaseUrl()}${path}`;
-}
-
-/**
- * Get the authentication headers
- * @param otherHeaders - additional headers to include
- */
-function authHeaders(otherHeaders: Record<string, string> = {}) {
-    const apiKey = core.getInput('api_key');
-    if (!apiKey) {
-        throw new Error("api_key not set");
+    /**
+     * Create a deployment with the given context and Dogefile
+     * @param context
+     * @param dogefile
+     */
+    public async createDeployment(
+        context: Context,
+        dogefile: unknown,
+    ): Promise<[unknown, number]> {
+        const url = new URL("/back/api/paas/deployment/", this.baseUrl);
+        const href = url.href;
+        const data = {
+            context,
+            dogefile,
+        }
+        const body = JSON.stringify(data);
+        const res = await fetch(url, {
+            method: 'POST',
+            body,
+            headers: this.authHeaders({'Content-Type': 'application/json'}),
+        });
+        const json = await res.json();
+        logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
+        return [json, res.status];
     }
-    return {
-        ...otherHeaders,
-        'X-Api-Key': apiKey,
-    };
-}
-
-/**
- * Perform a POST request to the API
- * @param path
- * @param data
- */
-export const post = async (path: string, data: unknown) => {
-
-    const body = JSON.stringify(data);
-    logger.debug(`POST ${path} ${body}`);
-
-    const res = await fetch(getApiUrl(path), {
-        method: 'POST',
-        body,
-        headers: authHeaders({'Content-Type': 'application/json'}),
-    });
-    const json = await res.json();
-    logger.debug(`POST ${path} ${res.status} ${JSON.stringify(json)}`);
-    return [json, res.status];
 }

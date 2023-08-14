@@ -9,7 +9,7 @@ const yaml = require('js-yaml');
 const {Command} = require("commander");
 
 import {Context, getContext} from "./context";
-import {Deployment, post, setBaseUrl} from "./api";
+import {Deployment, DogeApi, post, setBaseUrl} from "./api";
 import {failure, success, warning} from "./outcome";
 import {OptionValues} from "commander";
 
@@ -51,7 +51,6 @@ program
 
 const options = program.opts();
 setVerbose(options.verbose);
-setBaseUrl(options.apiUrl);
 
 
 /**
@@ -111,12 +110,10 @@ export async function run(args: Args): Promise<[Deployment, number]> {
     const context: Context = await getContext(args);
     const dogefile = loadDogefile(args.dogefile);
 
-    const requestData = {
-        context,
-        dogefile,
-    }
+    const api = new DogeApi(args.api_url, args.api_key);
+
     logger.debug(`context: ${JSON.stringify(context)}`);
-    const [response, statusCode] = (await post('/back/api/paas/deployment/', requestData)) as [Deployment, number];
+    const [response, statusCode] = (await api.createDeployment(context, dogefile)) as [Deployment, number];
 
     return [response, statusCode];
 }
