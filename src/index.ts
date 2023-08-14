@@ -9,7 +9,7 @@ const yaml = require('js-yaml');
 const {Command} = require("commander");
 
 import {Context, getContext} from "./context";
-import {Deployment, DogeApi, post, setBaseUrl} from "./api";
+import {Deployment, DogeApi} from "./api";
 import {failure, success, warning} from "./outcome";
 import {OptionValues} from "commander";
 

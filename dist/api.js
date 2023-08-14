@@ -12,15 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DogeApi = exports.setBaseUrl = void 0;
+exports.DogeApi = void 0;
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const logging_1 = require("./logging");
 const logger = (0, logging_1.getLogger)("api");
-let _BASE_URL = undefined;
-function setBaseUrl(url) {
-    _BASE_URL = url;
-}
-exports.setBaseUrl = setBaseUrl;
 class DogeApi {
     constructor(baseUrl, apiKey) {
         this.baseUrl = baseUrl;

@@ -1,15 +1,8 @@
 import fetch from "node-fetch";
-import * as core from '@actions/core';
 import {getLogger} from "./logging";
 import {Context} from "./context";
 
 const logger = getLogger("api");
-
-let _BASE_URL: string | undefined = undefined;
-
-export function setBaseUrl(url: string) {
-    _BASE_URL = url;
-}
 
 /**
  * Deployment status
