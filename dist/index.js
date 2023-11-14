@@ -383,6 +383,23 @@ function main(args) {
             // 404 Not Found : invalid api url
             // 500 Internal Server Error : internal error
             (0, outcome_1.failure)(statusCode);
+            switch (statusCode) {
+                case 400:
+                    core.setFailed("Invalid request");
+                    break;
+                case 401:
+                    core.setFailed("Invalid API key");
+                    break;
+                case 404:
+                    core.setFailed("Invalid API URL");
+                    break;
+                case 500:
+                    core.setFailed("Internal error");
+                    break;
+                default:
+                    core.setFailed("Unknown error " + statusCode);
+                    break;
+            }
         }
     });
 }
