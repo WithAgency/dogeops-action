@@ -46,9 +46,15 @@ class DogeApi {
                 body,
                 headers: this.apiHeaders(),
             });
-            const json = yield res.json();
-            logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
-            return [json, res.status];
+            try {
+                const json = yield res.json();
+                logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
+                return [json, res.status];
+            }
+            catch (e) {
+                logger.error(`POST ${href} ${res.status} ${res.text()}`);
+                return [null, res.status];
+            }
         });
     }
 }
