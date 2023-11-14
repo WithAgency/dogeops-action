@@ -56,12 +56,13 @@ export class DogeApi {
             headers: this.apiHeaders(),
         });
 
+        const plainResponse = await res.text();
         try{
-            const json = await res.json();
+            const json = JSON.parse(plainResponse);
             logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
             return [json, res.status];
         }catch (e) {
-            logger.error(`POST ${href} ${res.status} ${res.text()}`);
+            logger.error(`POST ${href} ${res.status} ${plainResponse}`);
             return [null, res.status];
         }
     }
