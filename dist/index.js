@@ -53,9 +53,16 @@ class DogeApi {
                 body,
                 headers: this.apiHeaders(),
             });
-            const json = yield res.json();
-            logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
-            return [json, res.status];
+            const plainResponse = yield res.text();
+            try {
+                const json = JSON.parse(plainResponse);
+                logger.debug(`POST ${href} ${res.status} ${JSON.stringify(json)}`);
+                return [json, res.status];
+            }
+            catch (e) {
+                logger.error(`POST ${href} ${res.status} ${plainResponse}`);
+                return [null, res.status];
+            }
         });
     }
 }
@@ -376,6 +383,23 @@ function main(args) {
             // 404 Not Found : invalid api url
             // 500 Internal Server Error : internal error
             (0, outcome_1.failure)(statusCode);
+            switch (statusCode) {
+                case 400:
+                    core.setFailed("Invalid request");
+                    break;
+                case 401:
+                    core.setFailed("Invalid API key");
+                    break;
+                case 404:
+                    core.setFailed("Invalid API URL");
+                    break;
+                case 500:
+                    core.setFailed("Internal error");
+                    break;
+                default:
+                    core.setFailed("Unknown error " + statusCode);
+                    break;
+            }
         }
     });
 }
@@ -25957,7 +25981,7 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"doge-ts","version":"1.1.0","description":"","main":"dist/index.js","scripts":{"build":"tsc","test":"echo \\"Error: no test specified\\" && exit 1","package":"npm run build && ncc build --source-map --license licenses.txt"},"keywords":[],"author":"Carlos Gonzalez <carlos.gonzalez@with-madrid.com>","license":"ISC","dependencies":{"@actions/core":"^1.10.0","@actions/github":"^5.1.1","chalk":"^5.3.0","commander":"^11.0.0","figlet":"^1.6.0","git-repo-info":"^2.1.1","js-yaml":"^4.1.0","node-fetch":"^3.3.1","node-process":"^1.0.1"},"devDependencies":{"@types/node":"^20.4.4","@vercel/ncc":"^0.36.1","typescript":"^5.1.6"}}');
+module.exports = JSON.parse('{"name":"doge-ts","version":"1.1.1","description":"","main":"dist/index.js","scripts":{"build":"tsc","test":"echo \\"Error: no test specified\\" && exit 1","package":"npm run build && ncc build --source-map --license licenses.txt"},"keywords":[],"author":"Carlos Gonzalez <carlos.gonzalez@with-madrid.com>","license":"ISC","dependencies":{"@actions/core":"^1.10.0","@actions/github":"^5.1.1","chalk":"^5.3.0","commander":"^11.0.0","figlet":"^1.6.0","git-repo-info":"^2.1.1","js-yaml":"^4.1.0","node-fetch":"^3.3.1","node-process":"^1.0.1"},"devDependencies":{"@types/node":"^20.4.4","@vercel/ncc":"^0.36.1","typescript":"^5.1.6"}}');
 
 /***/ })
 
